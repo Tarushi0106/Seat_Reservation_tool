@@ -1,0 +1,39 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Home.css';
+
+const HomePage = () => {
+  return (
+    <div className="home-container">
+      <header className="header">
+        <h1>🎟️ Seat Selection Tool</h1>
+        <p>Choose your seat with ease and comfort</p>
+      </header>
+
+      <div className="content">
+        <div className="info-box">
+          <h2>📋 How It Works</h2>
+          <p>
+            Select your preferred seat by clicking on the available options. 
+            Once confirmed, you can proceed to checkout.
+          </p>
+        </div>
+
+        <div className="actions">
+          <Link to="/seatregister" className="btn primary">
+            Select Seats
+          </Link>
+          <Link to="/about" className="btn secondary">
+            Learn More
+          </Link>
+        </div>
+      </div>
+
+      <footer className="footer">
+        &copy; 2024 Seat Selection Tool. All rights reserved.
+      </footer>
+    </div>
+  );
+};
+
+export default HomePage;

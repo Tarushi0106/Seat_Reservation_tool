@@ -1,0 +1,66 @@
+.seat-register-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.seat-map {
+    display: grid;
+    grid-template-columns: repeat(4, 50px);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.seat {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: #4CAF50; /* Green for available */
+}
+
+.selected {
+    background-color: #64B5F6; /* Blue for selected */
+    border: 3px solid #1976D2;
+}
+
+.booked {
+    background-color: #F44336; /* Red for booked */
+    pointer-events: none; /* Prevent further clicks */
+    border: 2px solid #B71C1C;
+}
+
+.details-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    padding: 5px;
+    width: 100%;
+}
+
+.btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
