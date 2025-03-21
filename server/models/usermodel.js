@@ -36,13 +36,13 @@ userSchema.methods.generateAuthToken = function () {
     return token;
 };
 
-// Corrected password comparison method
-userSchema.methods.comparePassword = async function (enteredPassword) { // Fixed typo in method name
+
+userSchema.methods.comparePassword = async function (enteredPassword) { 
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Corrected password hashing method
-userSchema.statics.hashPassword = async function (password) {  // Added password as parameter
+
+userSchema.statics.hashPassword = async function (password) {  
     return await bcrypt.hash(password, 10);
 };
 

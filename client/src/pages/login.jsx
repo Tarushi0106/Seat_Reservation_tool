@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './register.css';
 
 const Login = () => {
@@ -10,10 +11,6 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!email.endsWith('@ericsson.com')) {
-      alert('Only users with @ericsson.com email can log in.');
-      return;
-    }
 
     const userData = {
       email,
@@ -21,28 +18,26 @@ const Login = () => {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true, 
+          });
+      
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
+        const data = response.data;
         console.log('User logged in successfully:', data);
-
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-
+        localStorage.setItem('token', data.token);
         navigate('/seatregister');
       } else {
-        console.error('Error logging in:', await response.text());
+        console.error('Error logging in user:', response.data);
+        alert(`Error: ${response.data.message}`);
       }
     } catch (error) {
-      console.error('Error logging in:', error.message);
+      console.error('Error logging in user:', error.response?.data || error.message);
+      alert(`Error: ${error.response?.data.message || error.message}`);
     }
 
     setEmail('');
@@ -53,7 +48,7 @@ const Login = () => {
     <div className="signup-container">
       <div className="signup-form">
         <form onSubmit={submitHandler}>
-          <h3 className="title" style={{ fontSize: '2rem' }}>Login</h3>
+          <h3 className="title" style={{ fontSize: '2rem' }}>Log In</h3>
 
           <input
             id="email"
@@ -76,7 +71,7 @@ const Login = () => {
           />
 
           <button type="submit" className="submit-btn">
-            Login
+            Log In
           </button>
         </form>
 

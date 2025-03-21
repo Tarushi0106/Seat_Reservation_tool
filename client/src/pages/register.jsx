@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './register.css';
 
 const Register = () => {
@@ -18,35 +19,31 @@ const Register = () => {
     }
 
     const newUser = {
-      firstname: firstname,
-      lastname: lastname,
+      firstname,
+      lastname,
       email,
       password,
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/register`, {
-        method: 'POST',
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`, newUser, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newUser),
       });
-console.log(newUser);
-      if (response.ok) {
-        const data = await response.json();
+
+      if (response.status === 201) {
+        const data = response.data;
         console.log('User registered successfully:', data);
-
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-
+        localStorage.setItem('token', data.token);
         navigate('/seatregister');
       } else {
-        console.error('Error registering user:', await response.text());
+        console.error('Error registering user:', response.data);
+        alert(`Error: ${response.data.message}`);
       }
     } catch (error) {
-      console.error('Error registering user:', error.message);
+      console.error('Error registering user:', error.response?.data || error.message);
+      alert(`Error: ${error.response?.data.message || error.message}`);
     }
 
     setfirstname('');
