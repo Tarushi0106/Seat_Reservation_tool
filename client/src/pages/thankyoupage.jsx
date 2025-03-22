@@ -5,7 +5,7 @@ const ThankYouPage = () => {
     const navigate = useNavigate();
 
     const handleBackToHome = () => {
-        navigate('/'); // Navigate to home or booking page
+        navigate('/home'); // Navigate to home or booking page
     };
 
     return (

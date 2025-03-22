@@ -10,6 +10,7 @@ export default function RegisterSeat() {
     const [contact, setContact] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
+    const [seatnumber, setSeatnumber] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -17,6 +18,7 @@ export default function RegisterSeat() {
         if (name === 'contact') setContact(value);
         if (name === 'date') setDate(value);
         if (name === 'time') setTime(value);
+        if (name === 'seatnumber') setSeatnumber(value);
     };
 
     const handleSubmit = async (e) => {
@@ -27,6 +29,7 @@ export default function RegisterSeat() {
             contact,
             date,
             time,
+            seatnumber,
         };
 
         try {
@@ -38,7 +41,7 @@ export default function RegisterSeat() {
 
             if (response.status === 201) {
                 const data = response.data;
-                console.log('details save!', data);
+                console.log('Details saved successfully!', data);
                 localStorage.setItem('token', data.token);
                 navigate('/thankyoupage');
             } else {
@@ -54,6 +57,7 @@ export default function RegisterSeat() {
         setContact('');
         setDate('');
         setTime('');
+        setSeatnumber('');
     };
 
     return (
@@ -90,8 +94,16 @@ export default function RegisterSeat() {
                     onChange={handleChange}
                     required
                 />
+                <input
+                    type="text"
+                    name="seatnumber"
+                    value={seatnumber}
+                    onChange={handleChange}
+                    placeholder="Enter seat number"
+                    required
+                />
                 <button type="submit">Book Seat </button>
-                <Link to="/thankyoupage">Go to Thank You Page</Link>
+                <Link to="/thankyoupage"></Link>
             </form>
         </div>
     );

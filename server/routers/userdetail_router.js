@@ -11,6 +11,7 @@ router.post('/userdetails', [
         .matches(/^\d{10}$/).withMessage('Contact must be exactly 10 digits'),
     body('date').notEmpty().withMessage('Date is required'),
     body('time').notEmpty().withMessage('Time is required'),
+    body('seatnumber').notEmpty().withMessage('seatnumber is required'),
 ], controller.user_details);
 
 module.exports = router;

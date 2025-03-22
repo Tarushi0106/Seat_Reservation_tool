@@ -1,6 +1,7 @@
 const models = require('../models/seatregister_models');
 const { validationResult } = require('express-validator');
-const services = require('../services/seatregister_services');
+const services = require('../services/seatregister_services'); // Corrected import
+const controllers = require('./userdetails_controller');
 
 module.exports.register_seat = async (req, res) => {
     try {
@@ -9,8 +10,9 @@ module.exports.register_seat = async (req, res) => {
             return res.status(400).json({ error: errors.array() });
         }
 
-        const { seatnumber, name, contact } = req.body; // Make sure these are extracted properly
+        const { seatnumber } = req.body;
 
+        // Check if the seat already exists
         const isSeatAlreadyExists = await models.findOne({ seatnumber });
         if (isSeatAlreadyExists) {
             return res.status(400).json({
@@ -18,16 +20,10 @@ module.exports.register_seat = async (req, res) => {
             });
         }
 
-        const seat = await services.createSeat({ seatnumber, name, contact });
+        // Corrected the service function call
+        const seat = await services.createSeat({ seatnumber });
 
-        res.status(201).json({
-            message: 'Seat registered successfully',
-            seatDetails: {
-                seatnumber: seat.seatnumber,
-                name: seat.name,
-                contact: seat.contact
-            }
-        });
+        res.status(201).json({ seat });
     } catch (error) {
         console.error('Error registering seat:', error.message);
         res.status(500).json({ error: 'Internal server error' });

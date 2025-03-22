@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import seatPlan from './seatplan.png';
-
 import './SeatRegister.css';
 
 const SeatRegister = () => {
@@ -18,12 +17,10 @@ const SeatRegister = () => {
     e.preventDefault();
     const seatData = {
       seatnumber,
-      name,
-      contact,
     };
 
     try {
-      const response = await axios.post(${import.meta.env.VITE_BASE_URL}/user/register_seat, seatData, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register_seat`, seatData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -36,11 +33,11 @@ const SeatRegister = () => {
         navigate('/userdetails');
       } else {
         console.error('Error registering seat:', response.data);
-        alert(Error: ${response.data.message});
+        alert(`Error: ${response.data.message}`);
       }
     } catch (error) {
       console.error('Error registering seat:', error.response?.data || error.message);
-      alert(Error: ${error.response?.data.message || error.message});
+      alert(`Error: ${error.response?.data.message || error.message}`);
     }
   };
 
@@ -59,10 +56,13 @@ const SeatRegister = () => {
           name="seatnumber"
           value={seatnumber}
           onChange={handleInputChange}
-          placeholder="e.g., 1, 2 , 3, ...."
+          placeholder="e.g., 1, 2, 3, ...."
         />
+       
         <button onClick={handleBooking}>Book Seat</button>
       </div>
     </div>
   );
 };
+
+export default SeatRegister;

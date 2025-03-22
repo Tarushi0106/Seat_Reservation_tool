@@ -43,7 +43,7 @@ module.exports.user_details = async (req, res) => {
             contact,
             date,
             time,
-            seatnumber,  // Added seatnumber for proper tracking
+            seatnumber, 
         });
 
         res.status(201).json({ 
