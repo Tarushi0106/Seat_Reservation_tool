@@ -1,94 +1,68 @@
 import React, { useState } from 'react';
-import './seatregister.css';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import seatPlan from './seatplan.png';
+
+import './SeatRegister.css';
 
 const SeatRegister = () => {
-    const [selectedSeat, setSelectedSeat] = useState(null);
-    const [bookedSeats, setBookedSeats] = useState([]);
-    const [selectedDate, setSelectedDate] = useState('');
-    const [selectedTime, setSelectedTime] = useState('');
+  const navigate = useNavigate();
+  const [seatnumber, setSeatnumber] = useState('');
 
-{/* <a href="https://www.flaticon.com/free-icons/seat" title="seat icons">Seat icons created by Pixel perfect - Flaticon</a> */}
-    
-    const seats = [
-        'A1', 'A2', 'A3', 'A4',
-        'B1', 'B2', 'B3', 'B4',
-        'C1', 'C2', 'C3', 'C4'
-    ];
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'seatnumber') setSeatnumber(value);
+  };
 
-    const handleSeatSelection = (seat) => {
-        if (!bookedSeats.includes(seat)) {
-            setSelectedSeat(seat);
-        }
+  const handleBooking = async (e) => {
+    e.preventDefault();
+    const seatData = {
+      seatnumber,
+      name,
+      contact,
     };
 
-    const handleBooking = (e) => {
-        e.preventDefault();
-        if (selectedSeat && !bookedSeats.includes(selectedSeat)) {
-            setBookedSeats([...bookedSeats, selectedSeat]);
-            setSelectedSeat(null); // Clear selection after booking
-            alert(`Seat ${selectedSeat} booked successfully!`);
-        }
-    };
+    try {
+      const response = await axios.post(${import.meta.env.VITE_BASE_URL}/user/register_seat, seatData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    return (
-        <div className="seat-register-container">
-            <h1>🎯 Seat Registration</h1>
+      if (response.status === 201) {
+        const data = response.data;
+        console.log('Seat registered successfully:', data);
+        localStorage.setItem('token', data.token);
+        navigate('/userdetails');
+      } else {
+        console.error('Error registering seat:', response.data);
+        alert(Error: ${response.data.message});
+      }
+    } catch (error) {
+      console.error('Error registering seat:', error.response?.data || error.message);
+      alert(Error: ${error.response?.data.message || error.message});
+    }
+  };
 
-            <div className="seat-map">
-                {seats.map((seat) => (
-                    <div
-                        key={seat}
-                        className={`seat 
-                            ${bookedSeats.includes(seat) ? 'booked' : 
-                            selectedSeat === seat ? 'selected' : ''}`}
-                        onClick={() => handleSeatSelection(seat)}
-                    >
-                        {seat}
-                    </div>
-                ))}
-            </div>
+  return (
+    <div className="seat-register-container">
+      <h1 className="title">Select your seat prior to avoid the hassle!</h1>
+      <div className="seat-plan-container">
+        <img src={seatPlan} alt="Office Seat Plan" className="seat-plan-image" />
+      </div>
 
-            {selectedSeat && !bookedSeats.includes(selectedSeat) && (
-                <div className="details-section">
-                    <h2>Selected Seat: {selectedSeat}</h2>
-
-                    <form className="user-form" onSubmit={handleBooking}>
-                        <label>
-                            Full Name:
-                            <input type="text" placeholder="Enter your name" required />
-                        </label>
-
-                        <label>
-                            Phone number:
-                            <input type="number" placeholder="Enter your phone number" required />
-                        </label>
-
-                        <label>
-                            Select Date:
-                            <input 
-                                type="date" 
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                                required 
-                            />
-                        </label>
-
-                        <label>
-                            Select Time:
-                            <input 
-                                type="time" 
-                                value={selectedTime}
-                                onChange={(e) => setSelectedTime(e.target.value)}
-                                required 
-                            />
-                        </label>
-
-                        <button type="submit" className="btn">Confirm Booking</button>
-                    </form>
-                </div>
-            )}
-        </div>
-    );
+      {/* Booking Container */}
+      <div className="booking-container">
+        <label>Enter the selected seat number:</label>
+        <input
+          type="text"
+          name="seatnumber"
+          value={seatnumber}
+          onChange={handleInputChange}
+          placeholder="e.g., 1, 2 , 3, ...."
+        />
+        <button onClick={handleBooking}>Book Seat</button>
+      </div>
+    </div>
+  );
 };
-
-export default SeatRegister;

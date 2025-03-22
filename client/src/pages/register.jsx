@@ -14,7 +14,7 @@ const Register = () => {
     e.preventDefault();
 
     if (!email.endsWith('@ericsson.com')) {
-      alert('Only users with @ericsson.com email can register.');
+      alert('Only users working in ericsson can register.');
       return;
     }
 
@@ -36,7 +36,7 @@ const Register = () => {
         const data = response.data;
         console.log('User registered successfully:', data);
         localStorage.setItem('token', data.token);
-        navigate('/seatregister');
+        navigate('/home');
       } else {
         console.error('Error registering user:', response.data);
         alert(`Error: ${response.data.message}`);

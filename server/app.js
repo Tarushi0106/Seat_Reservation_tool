@@ -5,6 +5,8 @@ const cors = require('cors');
 const app = express();
 const cookieParser = require('cookie-parser');
  const userrouter = require('./routers/user_router');
+ const userdetailrouter = require('./routers/userdetail_router');
+  const seatregister_router = require('./routers/seatregister_routers');
 const connectToDb = require('./database/db');
 
 connectToDb();
@@ -27,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
  app.use('/user', userrouter);
+ app.use('/user', userdetailrouter);
+ app.use('/user', seatregister_router);
 
 app.get('/', (req, res) => {
   res.send('Hello World');
