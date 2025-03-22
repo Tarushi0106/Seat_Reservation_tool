@@ -1,12 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken'); // Clear auth token or session data
+    navigate('/login'); // Redirect to login page
+  };
+
   return (
     <div className="home-container">
       <header className="header">
         <h1>🎟️ Seat Selection Tool</h1>
+        <div className="logout-container">
+  <button className="logout-btn" onClick={handleLogout}>
+    Logout
+  </button>
+</div>
+
         <p>Choose your seat with ease and comfort</p>
       </header>
 

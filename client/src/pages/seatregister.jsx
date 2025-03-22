@@ -7,23 +7,21 @@ import './SeatRegister.css';
 const SeatRegister = () => {
   const navigate = useNavigate();
   const [seatnumber, setSeatnumber] = useState('');
+  const [cancelSeatNumber, setCancelSeatNumber] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'seatnumber') setSeatnumber(value);
+    if (name === 'cancelSeatNumber') setCancelSeatNumber(value);
   };
 
   const handleBooking = async (e) => {
     e.preventDefault();
-    const seatData = {
-      seatnumber,
-    };
+    const seatData = { seatnumber };
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register_seat`, seatData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.status === 201) {
@@ -41,9 +39,14 @@ const SeatRegister = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate('/seatcancellation');
+  };
+
   return (
     <div className="seat-register-container">
       <h1 className="title">Select your seat prior to avoid the hassle!</h1>
+
       <div className="seat-plan-container">
         <img src={seatPlan} alt="Office Seat Plan" className="seat-plan-image" />
       </div>
@@ -58,8 +61,14 @@ const SeatRegister = () => {
           onChange={handleInputChange}
           placeholder="e.g., 1, 2, 3, ...."
         />
-       
         <button onClick={handleBooking}>Book Seat</button>
+      </div>
+
+      <div className="cancel-container">
+       
+         <button className="cancel-btn" onClick={handleCancel}>
+          Want to cancel your booked seat ? 
+        </button>
       </div>
     </div>
   );

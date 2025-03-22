@@ -13,18 +13,24 @@ module.exports.user_details = async (req, res) => {
 
         // Ensure the booking date is within the next 15 days
         const bookingDate = new Date(date);
-        const currentDate = new Date();
+        const currentDate = new Date();  // Corrected: Now uses the actual current date
         const maxBookingDate = new Date();
         maxBookingDate.setDate(currentDate.getDate() + 15);
-
+        
         // Reset the time part of the dates to ensure accurate comparison
         bookingDate.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
         maxBookingDate.setHours(0, 0, 0, 0);
-
+        
+        if (isNaN(bookingDate.getTime())) {
+            return res.status(400).json({ message: 'Invalid date format. Please provide a valid date.' });
+        }
+        
         if (bookingDate < currentDate || bookingDate > maxBookingDate) {
             return res.status(400).json({ message: 'You can only book a seat within the next 15 days.' });
         }
+        
+       
 
         const isUserAlreadyExists = await BookingModel.findOne({ contact });
         if (isUserAlreadyExists) {
