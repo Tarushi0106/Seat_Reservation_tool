@@ -1,8 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const { body } = require('express-validator');
 const { cancelSeat } = require('../controllers/cancelseat_controller');
 
-// Correct the method to DELETE and use a dynamic parameter
-router.delete('/cancel_seat/:seatnumber', cancelSeat);
+router.post(
+    '/cancelseat',
+    [
+        body('name').notEmpty().withMessage('Name is required'),
+        body('contact').notEmpty().withMessage('Contact number is required'),
+        body('seatnumber').notEmpty().withMessage('Seat number is required')
+    ],
+    cancelSeat
+);
 
 module.exports = router;

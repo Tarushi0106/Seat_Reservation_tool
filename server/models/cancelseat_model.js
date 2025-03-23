@@ -1,19 +1,9 @@
 const mongoose = require('mongoose');
 
 const cancelSeatSchema = new mongoose.Schema({
-    seatnumber: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    username: {
-        type: String,
-        required: true
-    },
-    bookingDate: {
-        type: Date,
-        default: Date.now
-    }
+    name: { type: String, required: true },
+    contact: { type: String, required: true },
+    seatnumber: { type: String, required: true, unique: true }
 });
 
-module.exports = mongoose.model('CancelledSeat', cancelSeatSchema);
+module.exports = mongoose.model('Seat', cancelSeatSchema);

@@ -5,8 +5,41 @@ import './SeatCancellation.css';
 
 const SeatCancellation = () => {
   const [seatnumber, setSeatnumber] = useState('');
-  const [name , setName]= useState('');
-  const [contact , Contact]= useState('');
+  const [name, setName] = useState('');
+  const [contact, setContact] = useState('');
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'name') setName(value);
+    if (name === 'contact') setContact(value);
+    if (name === 'seatnumber') setSeatnumber(value);
+  };
+
+  const handleCancellation = async (e) => {
+    e.preventDefault();
+
+    const seatCancellation = { contact, seatnumber, name };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/cancelseat`,
+        seatCancellation,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      alert('Seat cancelled successfully!');
+      localStorage.removeItem('token');
+      navigate('/home');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred.';
+      alert(`Error: ${errorMessage}`);
+    }
+
+    setName('');
+    setContact('');
+    setSeatnumber('');
   };
 
   return (

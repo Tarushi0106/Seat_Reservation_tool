@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
  const userrouter = require('./routers/user_router');
  const userdetailrouter = require('./routers/userdetail_router');
   const seatregister_router = require('./routers/seatregister_routers');
+  const seatRoutes = require('./routers/cancelseat_router');
 const connectToDb = require('./database/db');
 
 connectToDb();
@@ -31,6 +32,7 @@ app.use(cookieParser());
  app.use('/user', userrouter);
  app.use('/user', userdetailrouter);
  app.use('/user', seatregister_router);
+ app.use('/user', seatRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World');
