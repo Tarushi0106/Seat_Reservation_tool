@@ -24,7 +24,7 @@ const SeatCancellation = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/cancelseat`,
+        `${import.meta.env.VITE_BASE_URL}/user/cancelseat`,
         seatCancellation,
         { headers: { 'Content-Type': 'application/json' } }
       );
