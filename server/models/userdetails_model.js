@@ -35,7 +35,7 @@ const userdetails = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        minlength: [2, 'seat number must be at least 2 characters long']
+        minlength: [1, 'seat number must be at least 2 characters long']
     }
 });
 

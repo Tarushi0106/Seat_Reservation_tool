@@ -35,7 +35,7 @@ const SeatRegister = () => {
       }
     } catch (error) {
       console.error('Error registering seat:', error.response?.data || error.message);
-      alert(`Error: ${error.response?.data.message || error.message}`);
+      alert(`Error registering seat: ${error.response?.data.message || error.message}`);
     }
   };
 

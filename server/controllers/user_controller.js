@@ -61,7 +61,3 @@ module.exports.login_user = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
-
-
-
