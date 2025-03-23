@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './UserDetails.css';
+import './home.css';
 import { Link } from 'react-router-dom';
 
 export default function RegisterSeat() {

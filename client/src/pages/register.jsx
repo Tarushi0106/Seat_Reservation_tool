@@ -9,6 +9,8 @@ const Register = () => {
   const [lastname, setlastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -18,18 +20,22 @@ const Register = () => {
       return;
     }
 
+    if (!otpSent) {
+      alert('Please verify your OTP before proceeding.');
+      return;
+    }
+
     const newUser = {
       firstname,
       lastname,
       email,
       password,
+      otp,
     };
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`, newUser, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.status === 201) {
@@ -50,6 +56,21 @@ const Register = () => {
     setlastname('');
     setEmail('');
     setPassword('');
+    setOtp('');
+    setOtpSent(false);
+  };
+
+  const handleSendOtp = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/send-otp`, { email });
+      if (response.status === 200) {
+        alert('OTP sent successfully! Please check your email.');
+        setOtpSent(true);
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error.response?.data || error.message);
+      alert(`Error: ${error.response?.data.message || error.message}`);
+    }
   };
 
   return (
@@ -88,6 +109,26 @@ const Register = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
 
+          <button
+            type="button"
+            className="otp-btn"
+            onClick={handleSendOtp}
+            disabled={!email.endsWith('@ericsson.com')}
+          >
+            Send OTP
+          </button>
+
+          <input
+            id="otp"
+            required
+            className="input"
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            disabled={!otpSent}
+          />
+
           <input
             id="password"
             className="input"
@@ -105,9 +146,7 @@ const Register = () => {
 
         <p className="footer-text">
           Already have an account?{' '}
-          <Link to="/login" className="login-link">
-            Log in here
-          </Link>
+          <Link to="/login" className="login-link">Log in here</Link>
         </p>
       </div>
     </div>

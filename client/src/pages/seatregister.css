@@ -40,7 +40,7 @@
   .booking-container button {
     padding: 10px 20px;
     font-size: 1rem;
-    background-color: #007bff;
+    background-color: #0D47A1;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -48,7 +48,7 @@
   }
   
   .booking-container button:hover {
-    background-color:red;
+    background-color:rgb(94, 9, 9);
     padding: 10px;
     font-size: 1rem;
     width: 200px;
@@ -62,7 +62,7 @@
   margin-top : 25px;
     padding: 10px 20px;
     font-size: 1rem;
-    background-color: rgba(255, 0, 0, 0.473); /* Same as Book Seat */
+    background-color: rgb(183, 22, 22);
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -72,5 +72,5 @@
 }
 
 .cancel-btn:hover {
-    background-color: red; /* Same hover effect */
+    background-color: #0D47A1; /* Same hover effect */
 }

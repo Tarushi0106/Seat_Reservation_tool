@@ -6,19 +6,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #3d5584 0%, #3d5584 100%);
+    background-color: #ffffff;
     font-family: 'Poppins', sans-serif;
-    color: #fff;
+    color: #333;
 }
 
 /* Container */
-.home-container {
+.home-container, .seat-booking-container, .container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     align-items: center;
     justify-content: center;
     text-align: center;
+    background-color: #f0f2f5;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 /* Header */
@@ -29,23 +32,24 @@ body {
 .header h1 {
     font-size: 3rem;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    color: #2a2a72;
+    letter-spacing: 1.5px;
 }
 
 .header p {
     font-size: 1.2rem;
+    color: #555;
     opacity: 0.9;
 }
 
 /* Content Section */
 .content {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 30px 40px;
+    background: #f0f4f8;
+    padding: 35px 45px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     width: 100%;
-    max-width: 400px;
+    max-width: 480px;
     transition: transform 0.3s ease;
 }
 
@@ -55,27 +59,27 @@ body {
 
 /* Info Box */
 .info-box {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .info-box h2 {
-    color: #4fc3f7;
-    font-size: 1.5rem;
+    color: #4a90e2;
+    font-size: 1.6rem;
 }
 
 /* Actions */
 .actions {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
 .btn {
-    background: #4fc3f7;
+    background: #4a90e2;
     color: #fff;
     border: none;
-    border-radius: 25px;
-    padding: 12px 20px;
+    border-radius: 30px;
+    padding: 14px 22px;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -83,7 +87,7 @@ body {
 }
 
 .btn.primary {
-    background: #1976D2;
+    background: #1565C0;
 }
 
 .btn.secondary {
@@ -92,38 +96,81 @@ body {
 }
 
 .btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(79, 195, 247, 0.8);
+    transform: scale(1.08);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.7);
 }
 
 /* Footer */
 .footer {
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 0.9rem;
-    opacity: 0.8;
+    color: #777;
 }
 
+/* Logout Button */
 .logout-container {
     position: fixed;
-    top: 10px;
-    right: 10px;
-    background-color: #ff4b4b;
-    border-radius: 6px;
-    padding: 8px 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  .logout-btn {
+    top: 12px;
+    right: 12px;
+    background-color: #e53935;
+    border-radius: 8px;
+    padding: 10px 14px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.logout-btn {
     background-color: transparent;
     color: #fff;
     border: none;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     transition: opacity 0.3s ease;
-  }
-  
-  .logout-btn:hover {
-    opacity: 0.8;
-  }
-  
+}
+
+.logout-btn:hover {
+    opacity: 0.9;
+}
+
+/* Booking Form */
+.booking-form, .form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="time"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+button {
+    background-color: #0D47A1;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #254472;
+}
