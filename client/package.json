@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .js,.jsx"
-  },
+    "lint": "eslint . --ext .js,.jsx",
+  "start": "react-scripts start",
+  "test": "react-scripts test"
+},
   "dependencies": {
     "@shadcn/ui": "^0.0.4",
     "axios": "^1.8.4",
@@ -16,7 +18,8 @@
     "react": "^19.0.0",
     "react-app-rewired": "^2.2.1",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.4.0"
+    "react-router-dom": "^7.4.0",
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
