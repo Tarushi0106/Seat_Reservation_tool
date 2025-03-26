@@ -2,39 +2,37 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const cors = require('cors');
-const app = express();
 const cookieParser = require('cookie-parser');
- const userrouter = require('./routers/user_router');
- const userdetailrouter = require('./routers/userdetail_router');
-  const seatregister_router = require('./routers/seatregister_routers');
-  const seatRoutes = require('./routers/cancelseat_router');
+const userrouter = require('./routers/user_router');
+const userdetailrouter = require('./routers/userdetail_router');
+const seatregister_router = require('./routers/seatregister_routers');
+const seatRoutes = require('./routers/cancelseat_router');
 const connectToDb = require('./database/db');
 
+const app = express();
+
+// Connect to MongoDB
 connectToDb();
 
+// CORS options
 const corsOptions = {
-  origin: 'http://localhost:5175',  
+  origin: 'http://localhost:5173',  
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,               
   optionsSuccessStatus: 204        
 };
 
-app.use(cors(corsOptions));
-
-
-app.options('*', cors(corsOptions)); 
-
-
+// Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
- app.use('/user', userrouter);
- app.use('/user', userdetailrouter);
- app.use('/user', seatregister_router);
- app.use('/user', seatRoutes);
-  //  app.use('/user', otprouter);
 
+// Routes
+app.use('/user', userrouter);
+app.use('/user', userdetailrouter);
+app.use('/user', seatregister_router);
+app.use('/user', seatRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World');
