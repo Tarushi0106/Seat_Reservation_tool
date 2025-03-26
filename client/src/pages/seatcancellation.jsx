@@ -26,7 +26,7 @@ const SeatCancellation = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/user/cancelseat`,
+        'https://seat-reservation-tool.onrender.com//user/cancelseat',
         seatCancellation,
         { headers: { 'Content-Type': 'application/json' } }
       );

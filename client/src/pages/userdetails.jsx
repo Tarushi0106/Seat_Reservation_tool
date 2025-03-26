@@ -33,7 +33,7 @@ export default function RegisterSeat() {
 
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/user/userdetails`,
+                'https://seat-reservation-tool.onrender.com//user/userdetails',
                 formData,
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );

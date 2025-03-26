@@ -18,7 +18,7 @@ const Login = () => {
     };
 
     try {
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData, {
+        const response = await axios.post('https://seat-reservation-tool.onrender.com//user/login', userData, {
             headers: {
               'Content-Type': 'application/json',
             },
