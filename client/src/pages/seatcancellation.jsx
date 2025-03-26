@@ -7,6 +7,7 @@ const SeatCancellation = () => {
   const [seatnumber, setSeatnumber] = useState('');
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
+  const [email, setEmail] = useState(''); // Add email state
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -15,12 +16,13 @@ const SeatCancellation = () => {
     if (name === 'name') setName(value);
     if (name === 'contact') setContact(value);
     if (name === 'seatnumber') setSeatnumber(value);
+    if (name === 'email') setEmail(value); // Handle email input change
   };
 
   const handleCancellation = async (e) => {
     e.preventDefault();
 
-    const seatCancellation = { contact, seatnumber, name };
+    const seatCancellation = { contact, seatnumber, name, email }; // Include email in the request body
 
     try {
       const response = await axios.post(
@@ -40,6 +42,7 @@ const SeatCancellation = () => {
     setName('');
     setContact('');
     setSeatnumber('');
+    setEmail(''); // Reset email state
   };
 
   return (
@@ -69,6 +72,14 @@ const SeatCancellation = () => {
         value={contact}
         onChange={handleInputChange}
         placeholder="Enter contact number"
+      />
+
+      <input
+        type="email"
+        name="email"
+        value={email}
+        onChange={handleInputChange}
+        placeholder="Enter your email"
       />
 
       <button onClick={handleCancellation}>Confirm Cancellation</button>

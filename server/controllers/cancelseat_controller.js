@@ -1,5 +1,6 @@
 const userDetailsModel = require('../models/userdetails_model');
 const { validationResult } = require('express-validator');
+const { sendCancellationConfirmation } = require('../services/emailserviceforcancelseat'); // Import email service
 
 module.exports.cancelSeat = async (req, res) => {
     const errors = validationResult(req);
@@ -22,7 +23,6 @@ module.exports.cancelSeat = async (req, res) => {
             return res.status(403).json({ message: 'Name does not match the record.' });
         }
 
-       
         const registrationTime = new Date(seatEntry.registrationTime);
         const currentTime = new Date();
         const timeDifference = (currentTime - registrationTime) / (1000 * 60 * 60); 
@@ -33,10 +33,17 @@ module.exports.cancelSeat = async (req, res) => {
 
         await userDetailsModel.deleteOne({ contact, seatnumber });
 
+        // Send cancellation confirmation email
+        try {
+            await sendCancellationConfirmation(seatEntry.email, seatnumber);
+        } catch (emailError) {
+            console.error('Error sending cancellation email:', emailError.message);
+            return res.status(500).json({ message: 'Seat cancelled, but failed to send confirmation email.' });
+        }
+
         res.status(200).json({ message: 'Seat cancelled successfully!' });
     } catch (error) {
         console.error('Error cancelling seat:', error.message);
         res.status(500).json({ message: 'Internal Server Error. Please try again later.' });
     }
 };
-

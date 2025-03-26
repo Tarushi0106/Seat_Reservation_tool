@@ -3,6 +3,7 @@ const BookingModel = require('../models/userdetails_model');
 const bookseatservice = require('../services/userdetailsservice');
 const { sendBookingConfirmation } = require('../services/emailservice');
 
+
 module.exports.user_details = async (req, res) => {
     try {
         const errors = validationResult(req);
