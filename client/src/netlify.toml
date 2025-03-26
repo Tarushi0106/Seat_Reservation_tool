@@ -1,4 +1,4 @@
 [build]
-  base = "client" # The directory containing your React app
-  publish = "client/build" # The directory to publish
-  command = "npm run build" # The command to build your React app
+  base = "client" 
+  publish = "client/build" 
+  command = "npm run build" 
