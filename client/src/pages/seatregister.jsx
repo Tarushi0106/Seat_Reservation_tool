@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -25,7 +26,7 @@ const SeatRegister = () => {
 
     try {
       const response = await axios.post(
-        'https://seat-reservation-tool.onrender.com//user/register_seat',
+        'https://seat-reservation-tool.onrender.com/user/register_seat',
         seatData,
         { headers: { 'Content-Type': 'application/json' } }
       );

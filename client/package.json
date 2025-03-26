@@ -8,15 +8,17 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .js,.jsx",
-  "start": "react-scripts start",
-  "test": "react-scripts test"
-},
+    "start": "react-scripts start",
+    "test": "react-scripts test"
+  },
   "dependencies": {
     "@shadcn/ui": "^0.0.4",
+    "@wojtekmaj/react-timerange-picker": "^6.0.0",
     "axios": "^1.8.4",
     "framer-motion": "^12.5.0",
     "react": "^19.0.0",
     "react-app-rewired": "^2.2.1",
+    "react-clock": "^5.1.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0",
     "react-scripts": "^5.0.1"

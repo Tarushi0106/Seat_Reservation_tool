@@ -13,10 +13,10 @@ const Register = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    // if (!email.endsWith('@ericsson.com')) {
-    //   alert('Only users working in Ericsson can register.');
-    //   return;
-    // }
+    if (!email.endsWith('@ericsson.com')) {
+      alert('Only users working in Ericsson can register.');
+      return;
+    }
 
     const newUser = { firstname, lastname, email, password };
 
