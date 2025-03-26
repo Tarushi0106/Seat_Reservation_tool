@@ -7,22 +7,28 @@ import './SeatRegister.css';
 const SeatRegister = () => {
   const navigate = useNavigate();
   const [seatnumber, setSeatnumber] = useState('');
-  const [cancelSeatNumber, setCancelSeatNumber] = useState('');
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'seatnumber') setSeatnumber(value);
-    if (name === 'cancelSeatNumber') setCancelSeatNumber(value);
+    setSeatnumber(e.target.value);
   };
 
   const handleBooking = async (e) => {
     e.preventDefault();
+
+    if (!seatnumber.trim()) {
+      console.error('Error: Seat number is required');
+      alert('Please enter a valid seat number.');
+      return;
+    }
+
     const seatData = { seatnumber };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register_seat`, seatData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/user/register_seat`,
+        seatData,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       if (response.status === 201) {
         const data = response.data;
@@ -30,17 +36,21 @@ const SeatRegister = () => {
         localStorage.setItem('token', data.token);
         navigate('/userdetails');
       } else {
-        console.error('Error registering seat:', response.data);
-        alert(`Error: ${response.data.message}`);
+        console.error('Unexpected response status:', response.status, response.data);
+        alert(`Error: ${response.data.message || 'Unexpected error occurred'}`);
       }
     } catch (error) {
-      console.error('Error registering seat:', error.response?.data || error.message);
-      alert(`Error registering seat: ${error.response?.data.message || error.message}`);
+      if (error.response) {
+        console.error('Server error response:', error.response.data);
+        alert(`Server Error: ${error.response.data.message || 'Something went wrong'}`);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        alert('Network error: Please check your internet connection.');
+      } else {
+        console.error('Error setting up request:', error.message);
+        alert(`Error: ${error.message}`);
+      }
     }
-  };
-
-  const handleCancel = () => {
-    navigate('/seatcancellation');
   };
 
   return (
@@ -51,7 +61,6 @@ const SeatRegister = () => {
         <img src={seatPlan} alt="Office Seat Plan" className="seat-plan-image" />
       </div>
 
-      {/* Booking Container */}
       <div className="booking-container">
         <label>Enter the selected seat number:</label>
         <input
@@ -61,13 +70,12 @@ const SeatRegister = () => {
           onChange={handleInputChange}
           placeholder="e.g., 1, 2, 3, ...."
         />
-        <button onClick={handleBooking}>Book Seat</button>
+        <button onClick={handleBooking}>Book Seat</button> 
       </div>
 
       <div className="cancel-container">
-       
-         <button className="cancel-btn" onClick={handleCancel}>
-          Want to cancel your booked seat ? 
+        <button className="cancel-btn" onClick={() => navigate('/seatcancellation')}>
+          Want to cancel your booked seat?
         </button>
       </div>
     </div>

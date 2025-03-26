@@ -132,7 +132,6 @@ body {
     opacity: 0.9;
 }
 
-/* Booking Form */
 .booking-form, .form {
     background-color: #ffffff;
     padding: 20px;
@@ -151,6 +150,7 @@ label {
 }
 
 input[type="text"],
+input[type="email"],
 input[type="tel"],
 input[type="datetime-local"],
 input[type="date"],
@@ -159,6 +159,13 @@ input[type="time"] {
     padding: 10px;
     border: 2px solid #ddd;
     border-radius: 8px;
+}
+
+/* Remove the default focus outline */
+input:focus {
+    outline: none;
+    border: 2px solid #4CAF50; /* Customize the border color */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Optional: Add a box shadow */
 }
 
 button {

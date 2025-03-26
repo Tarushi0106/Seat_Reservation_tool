@@ -14,7 +14,7 @@ const connectToDb = require('./database/db');
 connectToDb();
 
 const corsOptions = {
-  origin: 'http://localhost:5173',  
+  origin: 'http://localhost:5175',  
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,               
   optionsSuccessStatus: 204        

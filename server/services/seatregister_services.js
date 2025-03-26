@@ -1,7 +1,10 @@
-const userModel = require('../models/seatregister_models');
+const models = require('../models/seatregister_models');
 
 module.exports.createSeat = async ({ seatnumber, name, contact }) => {
-    return await userModel.create({ 
-        seatnumber,
-    });
+  const seat = new models({
+    seatnumber,
+   
+  });
+  await seat.save();
+  return seat;
 };

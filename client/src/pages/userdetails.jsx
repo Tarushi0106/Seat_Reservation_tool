@@ -6,46 +6,43 @@ import { Link } from 'react-router-dom';
 
 export default function RegisterSeat() {
     const navigate = useNavigate();
-    const [name, setName] = useState('');
-    const [contact, setContact] = useState('');
-    const [date, setDate] = useState('');
-    const [time, setTime] = useState('');
-    const [seatnumber, setSeatnumber] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        contact: '',
+        date: '',
+        time: '',
+        seatnumber: ''
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (name === 'name') setName(value);
-        if (name === 'contact') setContact(value);
-        if (name === 'date') setDate(value);
-        if (name === 'time') setTime(value);
-        if (name === 'seatnumber') setSeatnumber(value);
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
+        console.log('Retrieved token:', token); // Debugging log
 
-        const userdetails = {
-            name,
-            contact,
-            date,
-            time,
-            seatnumber,
-        };
+        if (!token) {
+            console.error('No token found in localStorage');
+            alert('You must be logged in to book a seat.');
+            return;
+        }
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/userdetails`, userdetails, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/user/userdetails`,
+                formData,
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
 
             if (response.status === 201) {
-                const data = response.data;
-                console.log('Details saved successfully!', data);
-                localStorage.setItem('token', data.token);
+                console.log('Details saved successfully!', response.data);
+                localStorage.setItem('token', response.data.token);
                 navigate('/thankyoupage');
             } else {
-                console.error('Error saving details', response.data);
                 alert(`Error: ${response.data.message}`);
             }
         } catch (error) {
@@ -53,56 +50,25 @@ export default function RegisterSeat() {
             alert(`Error: ${error.response?.data.message || error.message}`);
         }
 
-        setName('');
-        setContact('');
-        setDate('');
-        setTime('');
-        setSeatnumber('');
+        setFormData({ name: '', email: '', contact: '', date: '', time: '', seatnumber: '' });
     };
 
     return (
         <div className="container">
             <h1>Book Your Office Seat</h1>
             <form className="form" onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="name"
-                    value={name}
-                    onChange={handleChange}
-                    placeholder="Enter your name"
-                    required
-                />
-                <input
-                    type="tel"
-                    name="contact"
-                    value={contact}
-                    onChange={handleChange}
-                    placeholder="Enter your contact number"
-                    required
-                />
-                <input
-                    type="date"
-                    name="date"
-                    value={date}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="time"
-                    name="time"
-                    value={time}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="seatnumber"
-                    value={seatnumber}
-                    onChange={handleChange}
-                    placeholder="Enter seat number"
-                    required
-                />
-                <button type="submit">Book Seat </button>
+                {Object.keys(formData).map((key) => (
+                    <input
+                        key={key}
+                        type={key === 'email' ? 'email' : key === 'contact' ? 'tel' : 'text'}
+                        name={key}
+                        value={formData[key]}
+                        onChange={handleChange}
+                        placeholder={`Enter your ${key}`}
+                        required
+                    />
+                ))}
+                <button type="submit">Book Seat</button>
                 <Link to="/thankyoupage"></Link>
             </form>
         </div>

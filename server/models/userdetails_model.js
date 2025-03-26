@@ -25,6 +25,12 @@ const userdetails = new mongoose.Schema({
         required: true,
         minlength: [5, 'Date must be at least 5 characters long']
     },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: [5, 'Email must be at least 5 characters long']
+    },
     time: {
         type: String,
         required: true,

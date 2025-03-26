@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const BookingModel = require('../models/userdetails_model');
 const bookseatservice = require('../services/userdetailsservice');
+const { sendBookingConfirmation } = require('../services/emailservice');
 
 module.exports.user_details = async (req, res) => {
     try {
@@ -9,28 +10,24 @@ module.exports.user_details = async (req, res) => {
             return res.status(400).json({ error: errors.array() });
         }
 
-        const { name, contact, date, time, seatnumber } = req.body;
+        const { name, contact, date, time, seatnumber, email } = req.body;
 
-        // Ensure the booking date is within the next 15 days
         const bookingDate = new Date(date);
-        const currentDate = new Date();  // Corrected: Now uses the actual current date
+        const currentDate = new Date();
         const maxBookingDate = new Date();
         maxBookingDate.setDate(currentDate.getDate() + 15);
-        
-        // Reset the time part of the dates to ensure accurate comparison
+
         bookingDate.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
         maxBookingDate.setHours(0, 0, 0, 0);
-        
+
         if (isNaN(bookingDate.getTime())) {
             return res.status(400).json({ message: 'Invalid date format. Please provide a valid date.' });
         }
-        
+
         if (bookingDate < currentDate || bookingDate > maxBookingDate) {
             return res.status(400).json({ message: 'You can only book a seat within the next 15 days.' });
         }
-        
-       
 
         const isUserAlreadyExists = await BookingModel.findOne({ contact });
         if (isUserAlreadyExists) {
@@ -39,8 +36,8 @@ module.exports.user_details = async (req, res) => {
 
         const isSeatAlreadyBooked = await BookingModel.findOne({ seatnumber, date, time });
         if (isSeatAlreadyBooked) {
-            return res.status(400).json({ 
-                message: `This seat is already booked by ${isSeatAlreadyBooked.name} (Contact: ${isSeatAlreadyBooked.contact}) at the selected date and time.` 
+            return res.status(400).json({
+                message: `This seat is already booked by ${isSeatAlreadyBooked.name} (Contact: ${isSeatAlreadyBooked.contact}) at the selected date and time.`
             });
         }
 
@@ -49,10 +46,18 @@ module.exports.user_details = async (req, res) => {
             contact,
             date,
             time,
-            seatnumber, 
+            seatnumber,
+            email
         });
 
-        res.status(201).json({ 
+        try {
+            await sendBookingConfirmation(email, seatnumber);
+        } catch (emailError) {
+            console.error('Error sending email:', emailError.message);
+            return res.status(500).json({ message: 'Seat booked, but failed to send confirmation email.' });
+        }
+
+        res.status(201).json({
             message: 'Seat booked successfully',
             bookingDetails: {
                 name: newBooking.name,
