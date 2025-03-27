@@ -16,11 +16,15 @@ connectToDb();
 
 // CORS options
 const corsOptions = {
-  origin: [ 'http://localhost:5173'],
+  origin: [
+    'http://localhost:5173', // For local development
+    'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app' // Vercel frontend URL
+  ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,               
   optionsSuccessStatus: 204        
 };
+
 
 // Middleware
 app.use(cors(corsOptions));
