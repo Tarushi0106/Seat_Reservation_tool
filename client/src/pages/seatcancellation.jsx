@@ -26,7 +26,7 @@ const SeatCancellation = () => {
 
     try {
       const response = await axios.post(
-        'https://seat-reservation-tool.onrender.com//user/cancelseat',
+       'http://localhost:3000/user/cancelseat',
         seatCancellation,
         { headers: { 'Content-Type': 'application/json' } }
       );
