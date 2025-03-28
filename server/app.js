@@ -17,9 +17,9 @@ connectToDb();
 // CORS options
 const corsOptions = {
   origin: [
-    'http://localhost:5173', // For local development
-    "https://client-of-seat-managemant-r8ufji9ma-tarushi-s-projects.vercel.app/"
-    // Vercel frontend URL
+    'http://localhost:5173', 
+    'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app', // Fixed URL
+    'https://client-of-seat-managemant.vercel.app' // Added wildcard-safe URL
   ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,               
