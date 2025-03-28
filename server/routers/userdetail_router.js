@@ -1,9 +1,13 @@
 const { body } = require('express-validator');
-const controller = require('../controllers/userdetails_controller');
 const express = require('express');
+const controller = require('../controllers/userdetails_controller');
+const BookingModel = require('../models/userdetails_model');
+
+
 const router = express.Router();
 
-router.post('/userdetails', [
+// Validation Rules
+const validationRules = [
     body('name').notEmpty().withMessage('Name is required'),
     body('email')
         .notEmpty().withMessage('Email is required')
@@ -13,8 +17,12 @@ router.post('/userdetails', [
         .isLength({ min: 10, max: 10 }).withMessage('Contact must be exactly 10 digits')
         .matches(/^\d{10}$/).withMessage('Contact must be exactly 10 digits'),
     body('date').notEmpty().withMessage('Date is required'),
-    body('time').notEmpty().withMessage('Time is required'),
-    body('seatnumber').notEmpty().withMessage('Seat number is required'),
-], controller.user_details);
+    body('startTime').notEmpty().withMessage('Start time is required'),
+    body('endTime').notEmpty().withMessage('End time is required'),
+    body('seatnumber').notEmpty().withMessage('Seat number is required')
+];
+
+// Routes
+router.post('/userdetails', validationRules, controller.user_details);
 
 module.exports = router;

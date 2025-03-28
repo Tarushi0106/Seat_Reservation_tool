@@ -1,12 +1,13 @@
-const BookingModel = require('../models/userdetails_model');
+const BookingModel = require('../models/userdetails_model'); // Import the BookingModel
 
-module.exports.createBooking = async ({ name,email, contact, date, time , seatnumber }) => {
+module.exports.createBooking = async ({ name, email, contact, date, startTime, endTime, seatnumber }) => {
     const newBooking = new BookingModel({
         name,
         email,
         contact,
         date,
-        time,
+        startTime,
+        endTime,
         seatnumber,
     });
 

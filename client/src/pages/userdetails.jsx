@@ -11,7 +11,10 @@ export default function RegisterSeat() {
         email: '',
         contact: '',
         date: '',
-        time: '',
+        startTime: '',
+        startPeriod: 'AM',
+        endTime: '',
+        endPeriod: 'AM',
         seatnumber: ''
     });
 
@@ -23,51 +26,86 @@ export default function RegisterSeat() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
-        console.log('Retrieved token:', token); // Debugging log
-
         if (!token) {
-            console.error('No token found in localStorage');
             alert('You must be logged in to book a seat.');
             return;
         }
 
+        // Validate time
+        if (formData.startTime === formData.endTime && formData.startPeriod === formData.endPeriod) {
+            alert('Start time and end time cannot be the same.');
+            return;
+        }
+
+        if (formData.startPeriod === 'PM' && formData.endPeriod === 'AM') {
+            alert('End time cannot be earlier than start time.');
+            return;
+        }
+
+        const formattedData = {
+            ...formData,
+            startTime: `${formData.startTime} ${formData.startPeriod}`,
+            endTime: `${formData.endTime} ${formData.endPeriod}`
+        };
+
+        console.log('Formatted data being sent to the backend:', formattedData); // Debugging log
+
         try {
             const response = await axios.post(
                 'http://localhost:3000/user/userdetails',
-                formData,
+                formattedData,
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
 
             if (response.status === 201) {
-                console.log('Details saved successfully!', response.data);
-                localStorage.setItem('token', response.data.token);
                 navigate('/thankyoupage');
             } else {
                 alert(`Error: ${response.data.message}`);
             }
         } catch (error) {
-            console.error('Error registering user:', error.response?.data || error.message);
-            alert(`Error: ${error.response?.data.message || error.message}`);
+            console.error('Error during booking:', error); // Debugging log
+            const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again.';
+            alert(`Error: ${errorMessage}`);
         }
 
-        setFormData({ name: '', email: '', contact: '', date: '', time: '', seatnumber: '' });
+        setFormData({
+            name: '', email: '', contact: '', date: '',
+            startTime: '', startPeriod: 'AM',
+            endTime: '', endPeriod: 'AM',
+            seatnumber: ''
+        });
     };
 
     return (
         <div className="container">
             <h1>Book Your Office Seat</h1>
             <form className="form" onSubmit={handleSubmit}>
-                {Object.keys(formData).map((key) => (
-                    <input
-                        key={key}
-                        type={key === 'email' ? 'email' : key === 'contact' ? 'tel' : 'text'}
-                        name={key}
-                        value={formData[key]}
-                        onChange={handleChange}
-                        placeholder={`Enter your ${key}`}
-                        required
-                    />
-                ))}
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Enter your name" aria-label="Name" required />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" aria-label="Email" required />
+                <input type="tel" name="contact" value={formData.contact} onChange={handleChange} placeholder="Enter your contact number" aria-label="Contact" required />
+                <input type="date" name="date" value={formData.date} onChange={handleChange} aria-label="Date" required />
+
+                <div className="time-container">
+                    <label>From:</label>
+                    <div className="time-input">
+                        <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} aria-label="Start Time" required />
+                        <select className="am" name="startPeriod" value={formData.startPeriod} onChange={handleChange} aria-label="Start Period" required>
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+
+                    <label>To:</label>
+                    <div className="time-input">
+                        <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} aria-label="End Time" required />
+                        <select className="am" name="endPeriod" value={formData.endPeriod} onChange={handleChange} aria-label="End Period" required>
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <input type="text" name="seatnumber" value={formData.seatnumber} onChange={handleChange} placeholder="Enter your seat number" aria-label="Seat Number" required />
                 <button type="submit">Book Seat</button>
                 <Link to="/thankyoupage"></Link>
             </form>

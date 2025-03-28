@@ -1,4 +1,13 @@
-/* Body and General Styles */
+.time-input{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.am{
+    height:50%;
+    /* margin-bottom: 10px; */
+}
 body {
     margin: 0;
     padding: 0;
