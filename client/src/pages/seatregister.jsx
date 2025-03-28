@@ -26,7 +26,7 @@ const SeatRegister = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/user/register_seat',
+        'https://seat-reservation-tool.onrender.com/user/register_seat',
         seatData,
         { headers: { 'Content-Type': 'application/json' } }
       );

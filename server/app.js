@@ -18,7 +18,7 @@ connectToDb();
 const corsOptions = {
   origin: [
     'http://localhost:5173', // For local development
-    "https://client-of-seat-managemant-a8ot2ggwd-tarushi-s-projects.vercel.app/"
+    "https://client-of-seat-managemant-r8ufji9ma-tarushi-s-projects.vercel.app/"
     // Vercel frontend URL
   ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
