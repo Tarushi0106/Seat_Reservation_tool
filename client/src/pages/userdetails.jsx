@@ -15,7 +15,6 @@ export default function RegisterSeat() {
         startPeriod: 'AM',
         endTime: '',
         endPeriod: 'AM',
-        seatnumber: ''
     });
 
     const handleChange = (e) => {
@@ -42,6 +41,16 @@ export default function RegisterSeat() {
             return;
         }
 
+        // Calculate time difference
+        const startTime = new Date(`1970-01-01T${formData.startTime} ${formData.startPeriod}`);
+        const endTime = new Date(`1970-01-01T${formData.endTime} ${formData.endPeriod}`);
+        const timeDifference = (endTime - startTime) / (1000 * 60); // Difference in minutes
+
+        if (timeDifference < 15) {
+            alert('Seat must be booked for at least 15 minutes.');
+            return;
+        }
+
         const formattedData = {
             ...formData,
             startTime: `${formData.startTime} ${formData.startPeriod}`,
@@ -52,12 +61,13 @@ export default function RegisterSeat() {
 
         try {
             const response = await axios.post(
-                'https://seat-reservation-tool.onrender.com/user/userdetails',
+                'http://localhost:3000/user/userdetails',
                 formattedData,
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
 
             if (response.status === 201) {
+                alert('Seat booked successfully!');
                 navigate('/thankyoupage');
             } else {
                 alert(`Error: ${response.data.message}`);
@@ -72,7 +82,6 @@ export default function RegisterSeat() {
             name: '', email: '', contact: '', date: '',
             startTime: '', startPeriod: 'AM',
             endTime: '', endPeriod: 'AM',
-            seatnumber: ''
         });
     };
 
@@ -105,7 +114,6 @@ export default function RegisterSeat() {
                     </div>
                 </div>
 
-                <input type="text" name="seatnumber" value={formData.seatnumber} onChange={handleChange} placeholder="Enter your seat number" aria-label="Seat Number" required />
                 <button type="submit">Book Seat</button>
                 <Link to="/thankyoupage"></Link>
             </form>

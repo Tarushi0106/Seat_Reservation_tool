@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
-const SeatRegisterSchema = new mongoose.Schema({
-  seatnumber: {
+const seatSchema = new mongoose.Schema({
+  name: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
-
+  contact: {
+    type: String,
+    required: true
+  }
 });
 
-module.exports = mongoose.model('SeatRegister', SeatRegisterSchema);
+module.exports = mongoose.model('Seat', seatSchema);

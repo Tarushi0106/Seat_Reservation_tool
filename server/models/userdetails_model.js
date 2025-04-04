@@ -15,7 +15,6 @@ const userdetails = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
-    seatnumber: { type: String, required: true }
 }, { timestamps: true });
 
 userdetails.index({ date: 1, startTime: 1, endTime: 1, seatnumber: 1 }, { unique: true });

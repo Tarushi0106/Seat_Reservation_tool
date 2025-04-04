@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import './seatcancel.css';
 
 const SeatCancellation = () => {
-  const [seatnumber, setSeatnumber] = useState('');
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState(''); // Add email state
@@ -15,18 +14,17 @@ const SeatCancellation = () => {
 
     if (name === 'name') setName(value);
     if (name === 'contact') setContact(value);
-    if (name === 'seatnumber') setSeatnumber(value);
     if (name === 'email') setEmail(value); // Handle email input change
   };
 
   const handleCancellation = async (e) => {
     e.preventDefault();
 
-    const seatCancellation = { contact, seatnumber, name, email }; // Include email in the request body
+    const seatCancellation = { contact, name, email }; // Removed seatnumber
 
     try {
       const response = await axios.post(
-       'https://seat-reservation-tool.onrender.com/user/cancelseat',
+        'http://localhost:3000/user/cancelseat',
         seatCancellation,
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -41,7 +39,6 @@ const SeatCancellation = () => {
 
     setName('');
     setContact('');
-    setSeatnumber('');
     setEmail(''); // Reset email state
   };
 
@@ -50,39 +47,36 @@ const SeatCancellation = () => {
       <h1>Cancel Your Booking</h1>
       <p>Enter your details below to cancel your booking.</p>
 
-      <input
-        type="text"
-        name="seatnumber"
-        value={seatnumber}
-        onChange={handleInputChange}
-        placeholder="Enter seat number"
-      />
+      <form onSubmit={handleCancellation}>
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={handleInputChange}
+          placeholder="Enter your name"
+          required
+        />
 
-      <input
-        type="text"
-        name="name"
-        value={name}
-        onChange={handleInputChange}
-        placeholder="Enter your name"
-      />
+        <input
+          type="text"
+          name="contact"
+          value={contact}
+          onChange={handleInputChange}
+          placeholder="Enter contact number"
+          required
+        />
 
-      <input
-        type="text"
-        name="contact"
-        value={contact}
-        onChange={handleInputChange}
-        placeholder="Enter contact number"
-      />
+        <input
+          type="email"
+          name="email"
+          value={email}
+          onChange={handleInputChange}
+          placeholder="Enter your email"
+          required
+        />
 
-      <input
-        type="email"
-        name="email"
-        value={email}
-        onChange={handleInputChange}
-        placeholder="Enter your email"
-      />
-
-      <button onClick={handleCancellation}>Confirm Cancellation</button>
+        <button type="submit">Confirm Cancellation</button>
+      </form>
     </div>
   );
 };

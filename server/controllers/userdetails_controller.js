@@ -15,12 +15,12 @@ module.exports.user_details = async (req, res) => {
         }
 
         // Extract fields from the request body
-        const { name, contact, date, startTime, endTime, seatnumber, email } = req.body;
+        const { name, contact, date, startTime, endTime, email } = req.body;
 
-        console.log('Extracted fields:', { name, contact, date, startTime, endTime, seatnumber, email }); // Debugging log
+        console.log('Extracted fields:', { name, contact, date, startTime, endTime, email }); // Debugging log
 
         // Ensure all required fields are present
-        if (!name || !contact || !date || !startTime || !endTime || !seatnumber || !email) {
+        if (!name || !contact || !date || !startTime || !endTime || !email) {
             console.log('Missing required fields'); // Debugging log
             return res.status(400).json({
                 error: [
@@ -50,29 +50,23 @@ module.exports.user_details = async (req, res) => {
             return res.status(400).json({ message: 'You can only book a seat within the next 15 days.' });
         }
 
+        // Validate time difference (at least 15 minutes)
+        const startTimeObj = new Date(`1970-01-01T${startTime}`);
+        const endTimeObj = new Date(`1970-01-01T${endTime}`);
+        const timeDifference = (endTimeObj - startTimeObj) / (1000 * 60); // Difference in minutes
+
+        if (timeDifference < 15) {
+            console.log('Booking duration is less than 15 minutes'); // Debugging log
+            return res.status(400).json({ message: 'Seat must be booked for at least 15 minutes.' });
+        }
+
         // Check for existing bookings
         console.log('Checking for existing bookings...'); // Debugging log
-        const [existingUser, existingSeat] = await Promise.all([
-            BookingModel.findOne({ contact }),
-            BookingModel.findOne({
-                seatnumber,
-                date,
-                $or: [
-                    { startTime: { $lt: endTime }, endTime: { $gt: startTime } } // Check for overlapping times
-                ]
-            })
-        ]);
+        const existingUser = await BookingModel.findOne({ contact });
 
         if (existingUser) {
             console.log('Existing user found:', existingUser); // Debugging log
             return res.status(400).json({ message: 'You cannot book a seat twice!' });
-        }
-
-        if (existingSeat) {
-            console.log('Seat already booked:', existingSeat); // Debugging log
-            return res.status(400).json({
-                message: `This seat is already booked by ${existingSeat.name} (Contact: ${existingSeat.contact}) at the selected date and time.`
-            });
         }
 
         // Create a new booking
@@ -83,7 +77,6 @@ module.exports.user_details = async (req, res) => {
             date,
             startTime,
             endTime,
-            seatnumber,
             email
         });
 
@@ -91,8 +84,13 @@ module.exports.user_details = async (req, res) => {
 
         // Send booking confirmation email
         try {
-            console.log('Sending booking confirmation email to:', email); // Debugging log
-            await sendBookingConfirmation(email, seatnumber);
+            console.log('Sending booking confirmation email with details:');
+            console.log('Email:', email);
+            console.log('Date:', date);
+            console.log('Start Time:', startTime);
+            console.log('End Time:', endTime);
+
+            await sendBookingConfirmation(email, date, startTime, endTime);
         } catch (emailError) {
             console.error('Error sending email:', emailError.message); // Debugging log
         }
@@ -106,8 +104,7 @@ module.exports.user_details = async (req, res) => {
                 contact: newBooking.contact,
                 date: newBooking.date,
                 startTime: newBooking.startTime,
-                endTime: newBooking.endTime,
-                seatnumber: newBooking.seatnumber
+                endTime: newBooking.endTime
             }
         });
 

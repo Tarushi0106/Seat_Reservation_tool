@@ -1,10 +1,9 @@
-const { body } = require('express-validator');
-const controller = require('../controllers/seatregister_controllers');
+// routers/seatregister_routers.js
 const express = require('express');
 const router = express.Router();
+const seatController = require('../controllers/seatregister_controllers');
 
-router.post('/register_seat', [
-    body('seatnumber').notEmpty().withMessage('seatnumer is required'),
-], controller.register_seat);
+router.post('/seats/book', seatController.bookSeat); // This is the route you need
+router.get('/seats', seatController.getAllSeats);
 
 module.exports = router;
