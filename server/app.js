@@ -18,12 +18,13 @@ connectToDb();
 const corsOptions = {
   origin: [
     'http://localhost:5173', 
-    'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app', // Fixed URL
-    'https://client-of-seat-managemant.vercel.app' // Added wildcard-safe URL
+    'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app',
+    'https://client-of-seat-managemant.vercel.app',
+    'https://client-of-seat-managemant-1mpy-git-main-tarushi-s-projects.vercel.app' // ✅ Add this
   ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,               
-  optionsSuccessStatus: 204        
+  credentials: true,
+  optionsSuccessStatus: 204
 };
 
 
