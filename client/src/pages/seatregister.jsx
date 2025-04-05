@@ -23,27 +23,21 @@ const App = () => {
   }, [location.pathname]);
 
   const handleSeatClick = async (seatNumber) => {
+    // 🔴 Seat is already booked
     if (bookedSeats[seatNumber]) {
       const existingUser = bookedSeats[seatNumber];
-
-      const enteredToken = prompt(`Seat already booked by ${existingUser.name}. Please enter your token:`);
-
-      if (enteredToken !== existingUser.token) {
-        alert(`Unauthorized: Seat is already booked by ${existingUser.name} (${existingUser.contact})`);
-      } else {
-        alert(`You have already booked this seat.`);
-      }
-
+      alert(`Seat already booked by:\n\nName: ${existingUser.name}\nContact: ${existingUser.contact}`);
       return;
     }
-
+  
+    // 🟢 Seat is available — booking flow
     const name = prompt("Enter your name:");
     const contact = prompt("Enter your contact:");
-
+  
     if (!name || !contact) return;
-
+  
     const token = crypto.randomUUID();
-
+  
     try {
       await axios.post('http://localhost:3000/user/seats/book', {
         seat: seatNumber,
@@ -51,24 +45,25 @@ const App = () => {
         contact,
         token,
       });
-
+  
       setBookedSeats(prev => ({
         ...prev,
         [seatNumber]: { name, contact, token },
       }));
-
+  
       setSelectedSeat(seatNumber);
-
+  
       localStorage.setItem(`seat_token_${seatNumber}`, token);
-
+  
       navigate('/userdetails', {
         state: { seat: seatNumber, name, contact, token }
       });
-
+  
     } catch (error) {
       alert('Booking failed.');
     }
   };
+  
 
   const renderGrid = () => {
     const layout = [];
