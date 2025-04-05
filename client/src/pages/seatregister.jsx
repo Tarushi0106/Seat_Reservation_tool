@@ -10,7 +10,6 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Re-fetch booked seats whenever the user comes back to this page
   useEffect(() => {
     axios.get('http://localhost:3000/user/seats')
       .then(res => {
@@ -21,12 +20,20 @@ const App = () => {
         setBookedSeats(bookings);
       })
       .catch(console.error);
-  }, [location.pathname]); // 👈 triggers every time the route path changes
+  }, [location.pathname]);
 
   const handleSeatClick = async (seatNumber) => {
     if (bookedSeats[seatNumber]) {
-      const user = bookedSeats[seatNumber];
-      alert(`Seat already booked by ${user.name} (${user.contact})`);
+      const existingUser = bookedSeats[seatNumber];
+
+      const enteredToken = prompt(`Seat already booked by ${existingUser.name}. Please enter your token:`);
+
+      if (enteredToken !== existingUser.token) {
+        alert(`Unauthorized: Seat is already booked by ${existingUser.name} (${existingUser.contact})`);
+      } else {
+        alert(`You have already booked this seat.`);
+      }
+
       return;
     }
 
@@ -35,22 +42,27 @@ const App = () => {
 
     if (!name || !contact) return;
 
+    const token = crypto.randomUUID();
+
     try {
       await axios.post('http://localhost:3000/user/seats/book', {
         seat: seatNumber,
         name,
         contact,
+        token,
       });
 
       setBookedSeats(prev => ({
         ...prev,
-        [seatNumber]: { name, contact },
+        [seatNumber]: { name, contact, token },
       }));
 
       setSelectedSeat(seatNumber);
 
+      localStorage.setItem(`seat_token_${seatNumber}`, token);
+
       navigate('/userdetails', {
-        state: { seat: seatNumber, name, contact }
+        state: { seat: seatNumber, name, contact, token }
       });
 
     } catch (error) {
@@ -91,7 +103,7 @@ const App = () => {
   return (
     <div>
       <h1>Select Any Seat </h1>
-  
+
       <div style={{
         display: 'flex',
         justifyContent: 'flex-end',
@@ -102,8 +114,8 @@ const App = () => {
         <button
           onClick={() => navigate('/seatcancellation')}
           style={{
-            width: '130px',             // 🔹 Controlled horizontal size
-            height: '45px',             // 🔹 Taller vertical height
+            width: '130px',
+            height: '45px',
             fontSize: '14px',
             backgroundColor: '#dc3545',
             color: '#fff',
@@ -115,16 +127,12 @@ const App = () => {
           Click to cancel Seat
         </button>
       </div>
-  
 
-
-  
       <div className="office-container">
         {renderGrid()}
       </div>
     </div>
   );
-  
 };
 
 export default App;
