@@ -12,7 +12,6 @@ const App = () => {
 
   useEffect(() => {
     axios.get('https://seat-reservation-tool.onrender.com/user/seats')
-
       .then(res => {
         const bookings = res.data.reduce((acc, cur) => {
           acc[cur.seat] = cur;
