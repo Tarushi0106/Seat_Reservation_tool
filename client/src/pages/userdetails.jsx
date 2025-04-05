@@ -61,7 +61,7 @@ export default function RegisterSeat() {
 
         try {
             const response = await axios.post(
-                'http://localhost:3000/user/userdetails',
+                'https://seat-reservation-tool.onrender.com/user/userdetails',
                 formattedData,
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
