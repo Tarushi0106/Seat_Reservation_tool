@@ -22,6 +22,14 @@ export default function RegisterSeat() {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
+    // Helper function to convert 12-hour time to minutes since midnight
+    const timeToMinutes = (time, period) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        let adjustedHours = hours % 12; // Convert 12 AM/PM to 0
+        if (period === 'PM') adjustedHours += 12;
+        return adjustedHours * 60 + minutes;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
@@ -30,36 +38,33 @@ export default function RegisterSeat() {
             return;
         }
 
-        // Validate time
-        if (formData.startTime === formData.endTime && formData.startPeriod === formData.endPeriod) {
-            alert('Start time and end time cannot be the same.');
-            return;
-        }
-
-        if (formData.startPeriod === 'PM' && formData.endPeriod === 'AM') {
-            alert('End time cannot be earlier than start time.');
-            return;
-        }
-
-        // Calculate time difference
-        const startTime = new Date(`1970-01-01T${formData.startTime} ${formData.startPeriod}`);
-        const endTime = new Date(`1970-01-01T${formData.endTime} ${formData.endPeriod}`);
-        const timeDifference = (endTime - startTime) / (1000 * 60); // Difference in minutes
-
-        if (timeDifference < 15) {
-            alert('Seat must be booked for at least 15 minutes.');
-            return;
-        }
-
-        const formattedData = {
-            ...formData,
-            startTime: `${formData.startTime} ${formData.startPeriod}`,
-            endTime: `${formData.endTime} ${formData.endPeriod}`
-        };
-
-        console.log('Formatted data being sent to the backend:', formattedData); // Debugging log
-
         try {
+            const startMinutes = timeToMinutes(formData.startTime, formData.startPeriod);
+            const endMinutes = timeToMinutes(formData.endTime, formData.endPeriod);
+            const timeDifference = endMinutes - startMinutes;
+
+            console.log('Start Minutes:', startMinutes);
+            console.log('End Minutes:', endMinutes);
+            console.log('Time Difference (minutes):', timeDifference);
+
+            if (timeDifference <= 0) {
+                alert('End time must be after start time.');
+                return;
+            }
+
+            if (timeDifference < 15) {
+                alert('Seat must be booked for at least 15 minutes.');
+                return;
+            }
+
+            const formattedData = {
+                ...formData,
+                startTime: `${formData.startTime} ${formData.startPeriod}`,
+                endTime: `${formData.endTime} ${formData.endPeriod}`
+            };
+
+            console.log('Formatted data being sent to the backend:', formattedData);
+
             const response = await axios.post(
                 'http://localhost:3000/user/userdetails',
                 formattedData,
@@ -69,20 +74,26 @@ export default function RegisterSeat() {
             if (response.status === 201) {
                 alert('Seat booked successfully!');
                 navigate('/thankyoupage');
+                setFormData({
+                    name: '', email: '', contact: '', date: '',
+                    startTime: '', startPeriod: 'AM',
+                    endTime: '', endPeriod: 'AM',
+                });
             } else {
                 alert(`Error: ${response.data.message}`);
             }
         } catch (error) {
-            console.error('Error during booking:', error); // Debugging log
+            console.error('Error during booking:', error);
             const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again.';
-            alert(`Error: ${errorMessage}`);
-        }
 
-        setFormData({
-            name: '', email: '', contact: '', date: '',
-            startTime: '', startPeriod: 'AM',
-            endTime: '', endPeriod: 'AM',
-        });
+            if (errorMessage.includes('already booked')) {
+                alert(`Error: ${errorMessage}`);
+            } else if (errorMessage.includes('You cannot book a seat twice')) {
+                alert('You have already booked a seat. You cannot book another one.');
+            } else {
+                alert(`Error: ${errorMessage}`);
+            }
+        }
     };
 
     return (

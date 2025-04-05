@@ -60,12 +60,28 @@ module.exports.user_details = async (req, res) => {
             return res.status(400).json({ message: 'Seat must be booked for at least 15 minutes.' });
         }
 
-        // Check for existing bookings
-        console.log('Checking for existing bookings...'); // Debugging log
+        // Check for overlapping bookings
+        console.log('Checking for overlapping bookings...'); // Debugging log
+        const overlappingBooking = await BookingModel.findOne({
+            date,
+            $or: [
+                { startTime: { $lt: endTime }, endTime: { $gt: startTime } } // Overlapping time range
+            ]
+        });
+
+        if (overlappingBooking) {
+            console.log('Overlapping booking found:', overlappingBooking); // Debugging log
+            return res.status(400).json({
+                message: `Seat already booked by ${overlappingBooking.name}, Contact: ${overlappingBooking.contact}`
+            });
+        }
+
+        // Check if the user has already booked a seat
+        console.log('Checking if the user has already booked a seat...'); // Debugging log
         const existingUser = await BookingModel.findOne({ contact });
 
         if (existingUser) {
-            console.log('Existing user found:', existingUser); // Debugging log
+            console.log('User has already booked a seat:', existingUser); // Debugging log
             return res.status(400).json({ message: 'You cannot book a seat twice!' });
         }
 
