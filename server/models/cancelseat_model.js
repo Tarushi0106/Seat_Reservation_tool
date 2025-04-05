@@ -7,3 +7,4 @@ const cancelSeatSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Seat', cancelSeatSchema);
+
