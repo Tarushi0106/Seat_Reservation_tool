@@ -16,11 +16,12 @@ connectToDb();
 
 // CORS options
 const corsOptions = {
-  origin: [
+ origin: [
     'http://localhost:5173', 
     'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app',
     'https://client-of-seat-managemant.vercel.app',
-    'https://client-of-seat-managemant-1mpy-git-main-tarushi-s-projects.vercel.app' // ✅ Add this
+    'https://client-of-seat-managemant-1mpy-git-main-tarushi-s-projects.vercel.app',
+    'https://client-of-seat-managemant.vercel.app' // ✅ New deployment link added
   ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
