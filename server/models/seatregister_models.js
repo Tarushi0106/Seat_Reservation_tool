@@ -1,3 +1,5 @@
+// models/seatregister_models.js
+
 const mongoose = require('mongoose');
 
 const seatSchema = new mongoose.Schema({
@@ -18,6 +20,7 @@ const seatSchema = new mongoose.Schema({
     type: String,
     required: true
   }
-});
+}, { timestamps: true });
 
+// ✅ Let Mongoose use the default collection name: 'seats'
 module.exports = mongoose.model('Seat', seatSchema);
