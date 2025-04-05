@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 dotenv.config();
+
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -14,20 +15,29 @@ const app = express();
 // Connect to MongoDB
 connectToDb();
 
-// CORS options
+// Allowed origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app',
+  'https://client-of-seat-managemant.vercel.app',
+  'https://client-of-seat-managemant-1mpy-git-main-tarushi-s-projects.vercel.app',
+  'https://client-of-seat-managemant-tarushi-s-projects.vercel.app' // ✅ Newly added
+];
+
+// CORS options with dynamic origin checking
 const corsOptions = {
- origin: [
-    'http://localhost:5173', 
-    'https://client-of-seat-managemant-git-main-tarushi-s-projects.vercel.app',
-    'https://client-of-seat-managemant.vercel.app',
-    'https://client-of-seat-managemant-1mpy-git-main-tarushi-s-projects.vercel.app',
-    'https://client-of-seat-managemant.vercel.app' // ✅ New deployment link added
-  ],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204
 };
-
 
 // Middleware
 app.use(cors(corsOptions));
@@ -41,6 +51,7 @@ app.use('/user', userdetailrouter);
 app.use('/user', seatregister_router);
 app.use('/user', seatRoutes);
 
+// Default route
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
