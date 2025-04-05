@@ -6,5 +6,5 @@ const cancelSeatSchema = new mongoose.Schema({
     email: { type: String, required: true } 
 });
 
-module.exports = mongoose.model('Seat', cancelSeatSchema);
+module.exports = mongoose.model('cancelledSeat', cancelSeatSchema);
 
