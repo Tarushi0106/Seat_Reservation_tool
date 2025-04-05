@@ -11,7 +11,8 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    axios.get('http://localhost:3000/user/seats')
+    axios.get('https://seat-reservation-tool.onrender.com/user/seats')
+
       .then(res => {
         const bookings = res.data.reduce((acc, cur) => {
           acc[cur.seat] = cur;
