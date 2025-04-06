@@ -5,31 +5,19 @@ const { sendBookingConfirmation } = require('../services/emailservice');
 
 module.exports.user_details = async (req, res) => {
     try {
-        console.log('Incoming request body:', req.body); // Debugging log
-
-        // Validate request body
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log('Validation errors:', errors.array()); // Debugging log
             return res.status(400).json({ error: errors.array() });
         }
 
-        // Extract fields from the request body
         const { name, contact, date, startTime, endTime, email } = req.body;
 
-        console.log('Extracted fields:', { name, contact, date, startTime, endTime, email }); // Debugging log
-
-        // Ensure all required fields are present
         if (!name || !contact || !date || !startTime || !endTime || !email) {
-            console.log('Missing required fields'); // Debugging log
             return res.status(400).json({
-                error: [
-                    { type: "field", msg: "All fields are required", location: "body" }
-                ]
+                error: [{ msg: "All fields are required", location: "body" }]
             });
         }
 
-        // Validate date format
         const bookingDate = new Date(date);
         const currentDate = new Date();
         const maxBookingDate = new Date();
@@ -40,37 +28,50 @@ module.exports.user_details = async (req, res) => {
         maxBookingDate.setHours(0, 0, 0, 0);
 
         if (isNaN(bookingDate.getTime())) {
-            console.log('Invalid date format:', date); // Debugging log
             return res.status(400).json({ message: 'Invalid date format. Please provide a valid date.' });
         }
 
-        // Ensure the booking date is within the allowed range
         if (bookingDate < currentDate || bookingDate > maxBookingDate) {
-            console.log('Booking date out of range:', bookingDate); // Debugging log
             return res.status(400).json({ message: 'You can only book a seat within the next 15 days.' });
         }
 
-        // Validate time difference (at least 15 minutes)
         const startTimeObj = new Date(`1970-01-01T${startTime}`);
         const endTimeObj = new Date(`1970-01-01T${endTime}`);
-        const timeDifference = (endTimeObj - startTimeObj) / (1000 * 60); // Difference in minutes
+        const timeDifference = (endTimeObj - startTimeObj) / (1000 * 60);
 
         if (timeDifference < 15) {
-            console.log('Booking duration is less than 15 minutes'); // Debugging log
             return res.status(400).json({ message: 'Seat must be booked for at least 15 minutes.' });
         }
 
-        // Check for existing bookings
-        console.log('Checking for existing bookings...'); // Debugging log
-        const existingUser = await BookingModel.findOne({ contact });
+        // ❌ Check if the same user has already booked any seat
+        const sameUserBooking = await BookingModel.findOne({
+            contact,
+            date,
+            startTime,
+            endTime
+        });
 
-        if (existingUser) {
-            console.log('Existing user found:', existingUser); // Debugging log
-            return res.status(400).json({ message: 'You cannot book a seat twice!' });
+        if (sameUserBooking) {
+            return res.status(400).json({
+                message: 'You cannot book the same seat twice.'
+            });
         }
 
-        // Create a new booking
-        console.log('Creating a new booking...'); // Debugging log
+        // ❌ Check if another user has already booked the same seat
+        const existingBooking = await BookingModel.findOne({
+            date,
+            startTime,
+            endTime,
+            contact: { $ne: contact } // booked by someone else
+        });
+
+        if (existingBooking) {
+            return res.status(400).json({
+                message: `This seat is already booked by ${existingBooking.name} (Contact: ${existingBooking.contact}).`
+            });
+        }
+
+        // ✅ Create the booking
         const newBooking = await bookseatservice.createBooking({
             name,
             contact,
@@ -80,23 +81,12 @@ module.exports.user_details = async (req, res) => {
             email
         });
 
-        console.log('New booking created:', newBooking); // Debugging log
-
-        // Send booking confirmation email
         try {
-            console.log('Sending booking confirmation email with details:');
-            console.log('Email:', email);
-            console.log('Date:', date);
-            console.log('Start Time:', startTime);
-            console.log('End Time:', endTime);
-
             await sendBookingConfirmation(email, date, startTime, endTime);
         } catch (emailError) {
-            console.error('Error sending email:', emailError.message); // Debugging log
+            console.error('Email sending failed:', emailError.message);
         }
 
-        // Respond with success
-        console.log('Booking successful, responding to client...'); // Debugging log
         res.status(201).json({
             message: 'Seat booked successfully',
             bookingDetails: {
@@ -109,7 +99,7 @@ module.exports.user_details = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error selecting seat:', error.message); // Debugging log
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Unexpected error:', error.message);
+        res.status(500).json({ error: 'Something went wrong while processing your booking. Please try again.' });
     }
 };
