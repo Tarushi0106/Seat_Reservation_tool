@@ -13,61 +13,75 @@ const App = () => {
   useEffect(() => {
     axios.get('https://seat-reservation-tool.onrender.com/user/seats')
       .then(res => {
+        console.log("Fetched seats:", res.data);
         const bookings = res.data.reduce((acc, cur) => {
           acc[cur.seat] = cur;
           return acc;
         }, {});
         setBookedSeats(bookings);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error("Error fetching seats:", err);
+      });
   }, [location.pathname]);
 
   const handleSeatClick = async (seatNumber) => {
-    // 🔴 Seat is already booked
+    console.log("Seat clicked:", seatNumber);
+
     if (bookedSeats[seatNumber]) {
       const existingUser = bookedSeats[seatNumber];
       alert(`Seat already booked by:\n\nName: ${existingUser.name}\nContact: ${existingUser.contact}`);
       return;
     }
-  
-    // 🟢 Seat is available — booking flow
+
     const name = prompt("Enter your name:");
-    const contact = prompt("Enter your contact:");
-  
-    if (!name || !contact) return;
-  
+    const contact = prompt("Enter your contact number:");
+
+    if (!name || !contact) {
+      alert("Name and contact are required.");
+      return;
+    }
+
     const token = crypto.randomUUID();
-  
+    const date = new Date().toISOString().split("T")[0];
+    const startTime = "10:00";
+    const endTime = "12:00";
+
+    const bookingData = {
+      seat: seatNumber,
+      name,
+      contact,
+      token,
+      date,
+      startTime,
+      endTime,
+    };
+
+    console.log("Sending booking request:", bookingData);
+
     try {
-      await axios.post('https://seat-reservation-tool.onrender.com/user/seats/book', {
-        seat: seatNumber,
-        name,
-        contact,
-        token,
-      });
-  
+      const response = await axios.post('https://seat-reservation-tool.onrender.com/user/seats/book', bookingData);
+      console.log("Booking successful:", response.data);
+
       setBookedSeats(prev => ({
         ...prev,
-        [seatNumber]: { name, contact, token },
+        [seatNumber]: { name, contact, token }
       }));
-  
+
       setSelectedSeat(seatNumber);
-  
       localStorage.setItem(`seat_token_${seatNumber}`, token);
-  
+
       navigate('/userdetails', {
         state: { seat: seatNumber, name, contact, token }
       });
-  
     } catch (error) {
-      alert('Booking failed.');
+      console.error("Booking failed:", error.response?.data || error.message);
+      alert('Booking failed. Please try again later.');
     }
   };
-  
 
   const renderGrid = () => {
     const layout = [];
-
     layout.push(<div key="entrance" className="entrance">Office Entrance</div>);
 
     for (let i = 0; i < seats.length; i++) {
@@ -97,7 +111,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Select Any Seat </h1>
+      <h1>Select Any Seat</h1>
 
       <div style={{
         display: 'flex',
@@ -119,7 +133,7 @@ const App = () => {
             cursor: 'pointer',
           }}
         >
-          Click to cancel Seat
+          Cancel Seat
         </button>
       </div>
 
