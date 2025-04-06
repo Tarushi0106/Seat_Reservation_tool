@@ -28,11 +28,19 @@ const deleteExpiredSeats = async () => {
 
 // Book a seat
 exports.bookSeat = async (req, res) => {
-  const { name, contact, token, seat, date, startTime, endTime } = req.body;
+  const { seatId, name, contact, expiryTime } = req.body;
+
+  console.log("[BOOK SEAT] Incoming request payload:", req.body);
+
+  if (!seatId || !name || !contact || !expiryTime) {
+    console.warn("[BOOK SEAT] Missing required fields.");
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
   try {
     // Check if the seat is already booked
-    const existingSeat = await Seat.findOne({ seat });
+    const existingSeat = await Seat.findOne({ seatId });
+    console.log("[BOOK SEAT] Existing seat:", existingSeat);
 
     if (existingSeat) {
       return res.status(409).json({ 
@@ -41,12 +49,19 @@ exports.bookSeat = async (req, res) => {
       });
     }
 
-    const newSeat = new Seat({ name, contact, token, seat, date, startTime, endTime });
+    // Book the seat
+    const newSeat = new Seat({
+      seatId,
+      name,
+      contact,
+      expiryTime: new Date(expiryTime),
+    });
     await newSeat.save();
 
-    res.status(201).json({ message: 'Seat booked successfully', seat: newSeat });
+    res.status(201).json({ message: 'Seat booked successfully', booking: newSeat });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error("[BOOK SEAT] Error:", err.message);
+    res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
 
