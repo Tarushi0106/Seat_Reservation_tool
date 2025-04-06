@@ -1,7 +1,34 @@
-const Seat = require('../models/seatregister_models');
+const Seat = require('../models/seatregister_models'); // Import seatregister_models
+const UserDetails = require('../models/userdetails_model'); // Import userdetails_model
 
+// Utility: Delete expired seats from both collections
+const deleteExpiredSeats = async () => {
+  const now = new Date();
+
+  // Delete expired seats from seatregister_models
+  const seats = await Seat.find();
+  for (let s of seats) {
+    const bookingEnd = new Date(`${s.date}T${s.endTime}`);
+    if (bookingEnd < now) {
+      await Seat.deleteOne({ _id: s._id });
+      console.log(`Deleted expired seat from seatregister_models: ${s.seat}`);
+    }
+  }
+
+  // Delete expired seats from userdetails_model
+  const userDetails = await UserDetails.find();
+  for (let u of userDetails) {
+    const bookingEnd = new Date(`${u.date}T${u.endTime}`);
+    if (bookingEnd < now) {
+      await UserDetails.deleteOne({ _id: u._id });
+      console.log(`Deleted expired seat from userdetails_model: ${u.seat}`);
+    }
+  }
+};
+
+// Book a seat
 exports.bookSeat = async (req, res) => {
-  const { name, contact, token, seat } = req.body;
+  const { name, contact, token, seat, date, startTime, endTime } = req.body;
 
   try {
     // Check if the seat is already booked
@@ -14,7 +41,7 @@ exports.bookSeat = async (req, res) => {
       });
     }
 
-    const newSeat = new Seat({ name, contact, token, seat });
+    const newSeat = new Seat({ name, contact, token, seat, date, startTime, endTime });
     await newSeat.save();
 
     res.status(201).json({ message: 'Seat booked successfully', seat: newSeat });
@@ -23,9 +50,12 @@ exports.bookSeat = async (req, res) => {
   }
 };
 
+// Get all booked seats (removes expired ones first)
 exports.getAllSeats = async (req, res) => {
   try {
-    const seats = await Seat.find({}, 'seat name contact token'); // only return relevant fields
+    await deleteExpiredSeats(); // Clear out expired bookings from both collections
+
+    const seats = await Seat.find({}, 'seat name contact token date startTime endTime');
     res.json(seats);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

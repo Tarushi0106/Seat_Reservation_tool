@@ -7,3 +7,4 @@ router.post('/seats/book', seatController.bookSeat); // This is the route you ne
 router.get('/seats', seatController.getAllSeats);
 
 module.exports = router;
+

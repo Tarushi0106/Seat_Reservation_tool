@@ -19,7 +19,10 @@ const seatSchema = new mongoose.Schema({
   token: {
     type: String,
     required: true
-  }
+  },
+  startTime: String,
+  endTime: String,
+  date: { type: String, required: true }
 }, { timestamps: true });
 
 // ✅ Let Mongoose use the default collection name: 'seats'
