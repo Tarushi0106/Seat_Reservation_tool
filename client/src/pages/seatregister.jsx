@@ -25,31 +25,39 @@ const App = () => {
 
   const handleSeatClick = async (seatNumber) => {
     console.log("Seat clicked:", seatNumber);
-
+  
     if (bookedSeats[seatNumber]) {
       const existingUser = bookedSeats[seatNumber];
       alert(`Seat already booked by:\n\nName: ${existingUser.name}\nContact: ${existingUser.contact}`);
       return;
     }
-
+  
     const name = prompt("Enter your name:");
     const contact = prompt("Enter your contact number:");
-
-    if (!name || !contact) {
-      alert("Name and contact are required.");
+  
+    // Validate name
+    if (!name || name.length < 3) {
+      alert("Name should be at least 3 characters long.");
       return;
     }
-
+  
+    // Validate contact
+    const contactRegex = /^\d{10}$/; // Regex to ensure contact is exactly 10 digits
+    if (!contact || !contactRegex.test(contact)) {
+      alert("Contact should be exactly 10 digits and contain only numbers.");
+      return;
+    }
+  
     // Generate a unique token for the booking
     const token = uuidv4(); // Use the uuidv4 function to generate a UUID
-
+  
     const bookingData = {
       seat: seatNumber,
       name,
       contact,
       token, // Add the token to the booking data
     };
-
+  
     console.log("📤 Sending booking request:", bookingData); // Log the payload
     try {
       const response = await axios.post(
@@ -61,28 +69,26 @@ const App = () => {
         }
       );
       console.log("📥 Booking response:", response.data); // Log the response
-    
-
+  
       console.log("✅ Booking successful:", response.data);
-
+  
       setBookedSeats((prev) => ({
         ...prev,
         [seatNumber]: { name, contact, token },
       }));
-
+  
       setSelectedSeat(seatNumber);
-
+  
       alert('Seat booked successfully!');
-
+  
       navigate('/userdetails', {
         state: { seat: seatNumber, name, contact, token },
       });
     } catch (error) {
-      console.error(" Booking failed:");
-      alert( 'Booking failed. Please try again later.');
+      console.error("🔥 Booking failed:", error.response?.data || error.message);
+      alert(error.response?.data?.message || 'Booking failed. Please try again later.');
     }
   };
-
   const renderGrid = () => {
     const layout = [];
 
