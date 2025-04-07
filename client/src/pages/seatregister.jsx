@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './seatregister.css';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid'; // Import the v4 method and rename it as uuidv4
 
 const App = () => {
   const [bookedSeats, setBookedSeats] = useState({});
@@ -13,16 +14,13 @@ const App = () => {
   useEffect(() => {
     axios.get('https://seat-reservation-tool.onrender.com/user/seats')
       .then(res => {
-        console.log("Fetched seats:", res.data);
         const bookings = res.data.reduce((acc, cur) => {
           acc[cur.seat] = cur;
           return acc;
         }, {});
         setBookedSeats(bookings);
       })
-      .catch(err => {
-        console.error("Error fetching seats:", err);
-      });
+      .catch(console.error);
   }, [location.pathname]);
 
   const handleSeatClick = async (seatNumber) => {
@@ -42,46 +40,52 @@ const App = () => {
       return;
     }
 
-    const token = crypto.randomUUID();
-    const date = new Date().toISOString().split("T")[0];
-    const startTime = "10:00";
-    const endTime = "12:00";
+    // Generate a unique token for the booking
+    const token = uuidv4(); // Use the uuidv4 function to generate a UUID
 
     const bookingData = {
       seat: seatNumber,
       name,
       contact,
-      token,
-      date,
-      startTime,
-      endTime,
+      token, // Add the token to the booking data
     };
 
-    console.log("Sending booking request:", bookingData);
-
+    console.log("📤 Sending booking request:", bookingData); // Log the payload
     try {
-      const response = await axios.post('https://seat-reservation-tool.onrender.com/user/seats/book', bookingData);
-      console.log("Booking successful:", response.data);
+      const response = await axios.post(
+        'https://seat-reservation-tool.onrender.com/user/seats/book',
+        bookingData,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      console.log("📥 Booking response:", response.data); // Log the response
+    
 
-      setBookedSeats(prev => ({
+      console.log("✅ Booking successful:", response.data);
+
+      setBookedSeats((prev) => ({
         ...prev,
-        [seatNumber]: { name, contact, token }
+        [seatNumber]: { name, contact, token },
       }));
 
       setSelectedSeat(seatNumber);
-      localStorage.setItem(`seat_token_${seatNumber}`, token);
+
+      alert('Seat booked successfully!');
 
       navigate('/userdetails', {
-        state: { seat: seatNumber, name, contact, token }
+        state: { seat: seatNumber, name, contact, token },
       });
     } catch (error) {
-      console.error("Booking failed:", error.response?.data || error.message);
-      alert('Booking failed. Please try again later.');
+      console.error(" Booking failed:");
+      alert( 'Booking failed. Please try again later.');
     }
   };
 
   const renderGrid = () => {
     const layout = [];
+
     layout.push(<div key="entrance" className="entrance">Office Entrance</div>);
 
     for (let i = 0; i < seats.length; i++) {
@@ -111,7 +115,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Select Any Seat</h1>
+      <h1>Select Any Seat </h1>
 
       <div style={{
         display: 'flex',
@@ -133,7 +137,7 @@ const App = () => {
             cursor: 'pointer',
           }}
         >
-          Cancel Seat
+          Click to cancel Seat
         </button>
       </div>
 

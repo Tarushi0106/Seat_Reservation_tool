@@ -1,11 +1,11 @@
-const Seat = require('../models/seatregister_models'); // Import seatregister_models
-const UserDetails = require('../models/userdetails_model'); // Import userdetails_model
+const { createSeatBooking, getAllBookings } = require('../services/seatregister_services');
+const Seat = require('../models/seatregister_models');
+const UserDetails = require('../models/userdetails_model');
 
-// Utility: Delete expired seats from both collections
+// Utility to delete expired seats
 const deleteExpiredSeats = async () => {
   const now = new Date();
 
-  // Delete expired seats from seatregister_models
   const seats = await Seat.find();
   for (let s of seats) {
     const bookingEnd = new Date(`${s.date}T${s.endTime}`);
@@ -15,7 +15,6 @@ const deleteExpiredSeats = async () => {
     }
   }
 
-  // Delete expired seats from userdetails_model
   const userDetails = await UserDetails.find();
   for (let u of userDetails) {
     const bookingEnd = new Date(`${u.date}T${u.endTime}`);
@@ -26,53 +25,49 @@ const deleteExpiredSeats = async () => {
   }
 };
 
-// Book a seat
+// Book a seat controller
 exports.bookSeat = async (req, res) => {
-  const { seatId, name, contact, expiryTime } = req.body;
-
   console.log("[BOOK SEAT] Incoming request payload:", req.body);
 
-  if (!seatId || !name || !contact || !expiryTime) {
+  const { name, contact, token, seat } = req.body;
+
+  if (!name || !contact || seat === undefined || seat === null || !token) {
     console.warn("[BOOK SEAT] Missing required fields.");
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({
+      message: 'All fields are required.',
+      received: req.body, // Log the received payload for debugging
+    });
   }
 
   try {
-    // Check if the seat is already booked
-    const existingSeat = await Seat.findOne({ seatId });
-    console.log("[BOOK SEAT] Existing seat:", existingSeat);
+    const existingSeat = await Seat.findOne({ seat });
 
     if (existingSeat) {
-      return res.status(409).json({ 
-        message: `Seat already booked by ${existingSeat.name}`, 
-        bookedBy: existingSeat 
+      return res.status(409).json({
+        message: `Seat ${seat} is already booked by ${existingSeat.name}.`,
+        bookedBy: existingSeat,
       });
     }
 
-    // Book the seat
-    const newSeat = new Seat({
-      seatId,
-      name,
-      contact,
-      expiryTime: new Date(expiryTime),
-    });
-    await newSeat.save();
+    const booking = await createSeatBooking({ name, contact, token, seat });
 
-    res.status(201).json({ message: 'Seat booked successfully', booking: newSeat });
-  } catch (err) {
-    console.error("[BOOK SEAT] Error:", err.message);
-    res.status(500).json({ message: 'Internal server error', error: err.message });
+    res.status(201).json({
+      message: `Seat ${seat} booked successfully.`,
+      booking,
+    });
+  } catch (error) {
+    console.error('Error booking seat:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-// Get all booked seats (removes expired ones first)
+// Get all booked seats
 exports.getAllSeats = async (req, res) => {
   try {
-    await deleteExpiredSeats(); // Clear out expired bookings from both collections
-
-    const seats = await Seat.find({}, 'seat name contact token date startTime endTime');
-    res.json(seats);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    await deleteExpiredSeats(); // Clear expired bookings
+    const seats = await getAllBookings();
+    res.status(200).json(seats);
+  } catch (error) {
+    console.error('Error fetching seats:', error.message);
+    res.status(500).json({ error: 'Server error' });
   }
 };
