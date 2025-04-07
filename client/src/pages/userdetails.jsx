@@ -12,9 +12,7 @@ export default function RegisterSeat() {
         contact: '',
         date: '',
         startTime: '',
-        startPeriod: 'AM',
         endTime: '',
-        endPeriod: 'AM',
     });
 
     const handleChange = (e) => {
@@ -31,19 +29,19 @@ export default function RegisterSeat() {
         }
 
         // Validate time
-        if (formData.startTime === formData.endTime && formData.startPeriod === formData.endPeriod) {
+        if (formData.startTime === formData.endTime) {
             alert('Start time and end time cannot be the same.');
             return;
         }
 
-        if (formData.startPeriod === 'PM' && formData.endPeriod === 'AM') {
+        if (formData.startTime > formData.endTime) {
             alert('End time cannot be earlier than start time.');
             return;
         }
 
         // Calculate time difference
-        const startTime = new Date(`1970-01-01T${formData.startTime} ${formData.startPeriod}`);
-        const endTime = new Date(`1970-01-01T${formData.endTime} ${formData.endPeriod}`);
+        const startTime = new Date(`1970-01-01T${formData.startTime}`);
+        const endTime = new Date(`1970-01-01T${formData.endTime}`);
         const timeDifference = (endTime - startTime) / (1000 * 60); // Difference in minutes
 
         if (timeDifference < 15) {
@@ -53,8 +51,6 @@ export default function RegisterSeat() {
 
         const formattedData = {
             ...formData,
-            startTime: `${formData.startTime} ${formData.startPeriod}`,
-            endTime: `${formData.endTime} ${formData.endPeriod}`
         };
 
         console.log('Formatted data being sent to the backend:', formattedData); // Debugging log
@@ -80,8 +76,7 @@ export default function RegisterSeat() {
 
         setFormData({
             name: '', email: '', contact: '', date: '',
-            startTime: '', startPeriod: 'AM',
-            endTime: '', endPeriod: 'AM',
+            startTime: '', endTime: '',
         });
     };
 
@@ -98,19 +93,11 @@ export default function RegisterSeat() {
                     <label>From:</label>
                     <div className="time-input">
                         <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} aria-label="Start Time" required />
-                        <select className="am" name="startPeriod" value={formData.startPeriod} onChange={handleChange} aria-label="Start Period" required>
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                        </select>
                     </div>
 
                     <label>To:</label>
                     <div className="time-input">
                         <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} aria-label="End Time" required />
-                        <select className="am" name="endPeriod" value={formData.endPeriod} onChange={handleChange} aria-label="End Period" required>
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                        </select>
                     </div>
                 </div>
 
