@@ -2,10 +2,11 @@ from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS so frontend on port 3000 can access this
 
-# Load the model with error handling
 model_path = "no_show_model.pkl"
 
 try:
@@ -15,8 +16,8 @@ try:
     else:
         raise FileNotFoundError(f"Model file '{model_path}' not found in the current directory.")
 except Exception as e:
-    print(f" Error loading model: {e}")
-    model = None  # prevent crash on predict
+    print(f"❌ Error loading model: {e}")
+    model = None
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -27,7 +28,7 @@ def predict():
         data = request.get_json()
         print("📥 Data received:", data)
 
-        df = pd.DataFrame([data])  # Assumes input is a single JSON object
+        df = pd.DataFrame([data])
         prediction = model.predict(df)[0]
         probability = model.predict_proba(df)[0][1]
 
@@ -42,5 +43,5 @@ def predict():
         return jsonify({"error": "Prediction failed", "details": str(e)}), 400
 
 if __name__ == '__main__':
-    print("🚀 Starting Flask server...")
-    app.run(debug=True)
+    print("🚀 Starting Flask server on http://localhost:3000")
+    app.run(host='0.0.0.0', port=3000, debug=True)

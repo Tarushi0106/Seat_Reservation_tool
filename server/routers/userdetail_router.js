@@ -39,4 +39,14 @@ router.post('/userdetails', validationRules, (req, res, next) => {
     next();
 }, controller.user_details);
 
+// Route to get all user details
+router.get('/userdetails', async (req, res) => {
+    try {
+        const userDetails = await BookingModel.find();
+        res.status(200).json(userDetails);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user details' });
+    }
+});
+
 module.exports = router;

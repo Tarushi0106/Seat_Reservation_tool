@@ -1,0 +1,75 @@
+/* General container styling */
+.dashboard-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9; /* Light background for better contrast */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 800px;
+    margin: 20px auto; /* Center the container */
+}
+
+/* Header styling */
+.dashboard-container h1 {
+    font-size: 28px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Select dropdown styling */
+select {
+    margin: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    border-color: #007bff; /* Highlight border on focus */
+    outline: none;
+}
+
+/* Button styling */
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff; /* Primary blue color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+button:active {
+    background-color: #004085; /* Even darker blue on click */
+    transform: scale(1); /* Reset zoom effect */
+}
+
+/* Add responsiveness */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 15px;
+    }
+
+    select, button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}

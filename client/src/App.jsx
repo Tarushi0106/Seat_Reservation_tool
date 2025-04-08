@@ -7,10 +7,11 @@ import Seatcancellation from './pages/seatcancellation';
 import Register from './pages/register';
 import Login from './pages/login';
 import Thankyoupage from './pages/thankyoupage';
+import Dashboard from './pages/dashboard'; // ✅ Capitalized
 
 const App = () => {
   return (
-  
+
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/userdetails" element={<Userdetails />} />
@@ -19,8 +20,9 @@ const App = () => {
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/thankyoupage" element={<Thankyoupage />} />
+        <Route path="/dashboard" element={<Dashboard />} /> {/* ✅ Capitalized */}
       </Routes>
-   
+ 
   );
 };
 
