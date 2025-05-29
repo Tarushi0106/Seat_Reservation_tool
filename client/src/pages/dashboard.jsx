@@ -20,7 +20,7 @@ const Dashboard = () => {
     if (!user) return;
 
     try {
-      const response = await axios.post('http://localhost:3000/predict', user); // Flask runs on 5000
+      const response = await axios.post('http://localhost:5000/predict', user); // Flask runs on 5000
       setPrediction(response.data);
     } catch (err) {
       console.error('Error predicting:', err);
